@@ -10,7 +10,7 @@ services:
       - auth_db_data:/var/lib/postgresql/data
     networks:
       - default_network
-  
+
   auth_app:
     container_name: auth-app-prod
     image: 758280076486.dkr.ecr.eu-central-1.amazonaws.com/focusboard/auth:latest
@@ -70,8 +70,8 @@ services:
       NODE_ENV: production
       PORT: 3000
       HOSTNAME: 0.0.0.0
-
-      API_BASE_URL: "http://localhost:8088"
+      NEXT_PUBLIC_AUTH_API_BASE_URL: "http://auth_app:${PORT}"
+      API_BASE_URL: "http://focus:8088"
       APP_VERSION: "local"
     depends_on:
       - focus
