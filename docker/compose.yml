@@ -1,4 +1,20 @@
 services:
+  nginx:
+    container_name: nginx-lb-prod
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - auth_app
+      - focus
+      - frontend
+    networks:
+      - default_network
+    restart: unless-stopped
+
   auth_database:
     container_name: auth-postgres-prod
     image: postgres:16-alpine
@@ -8,15 +24,22 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD?missing db password}
     volumes:
       - auth_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U focus -d focus"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - default_network
+    ports:
+      - ${DB_PORT?missing app port}:${DB_PORT?missing app port}
 
   auth_app:
     container_name: auth-app-prod
     image: 758280076486.dkr.ecr.eu-central-1.amazonaws.com/focusboard/auth:latest
     environment:
       DB_HOST: auth_database
-      DB_PORT: 5432
+      DB_PORT: ${DB_PORT?missing db port}
       DB_NAME: ${DB_NAME?missing db name}
       DB_USERNAME: ${DB_USERNAME?missing db username}
       DB_PASSWORD: ${DB_PASSWORD?missing db password}
@@ -26,6 +49,8 @@ services:
       GRPC_PORT: ${GRPC_PORT?missing grpc port}
     depends_on:
       - auth_database
+    expose:
+      - ${PORT?missing app port}
     networks:
       - default_network
 
@@ -35,8 +60,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    ports:
-      - "8088:8088"
+    expose:
+      - "8088"
     environment:
       QUARKUS_PROFILE: docker # Quarkus auto loads application-docker.yaml
     restart: unless-stopped
@@ -50,7 +75,7 @@ services:
       POSTGRES_USER: focus
       POSTGRES_PASSWORD: focus
     ports:
-      - "5432:5432"
+      - "5431:5431"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -64,13 +89,13 @@ services:
   frontend:
     container_name: frontend-app-prod
     image: 758280076486.dkr.ecr.eu-central-1.amazonaws.com/focusboard/frontend:latest
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     environment:
       NODE_ENV: production
       PORT: 3000
       HOSTNAME: 0.0.0.0
-      NEXT_PUBLIC_AUTH_API_BASE_URL: "http://auth_app:${PORT}"
+      NEXT_PUBLIC_AUTH_API_BASE_URL: "http://localhost/api/auth"
       API_BASE_URL: "http://focus:8088"
       APP_VERSION: "local"
     depends_on:

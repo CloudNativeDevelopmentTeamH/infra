@@ -15,3 +15,6 @@ insert_final_newline = false
 indent_size = 2
 indent_style = space
 end_of_line = lf
+
+[*.conf]
+indent_size = 2
