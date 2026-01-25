@@ -1,3 +1,6 @@
+# Environment files
 .env
+
+# Secret files
 *secrets.yaml
 *secret.yaml
