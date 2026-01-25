@@ -30,16 +30,15 @@ services:
       - default_network
 
   focus:
-    build:
-      context: .
-      dockerfile: src/main/docker/Dockerfile.jvm
+    container_name: focus-app-prod
+    image: 758280076486.dkr.ecr.eu-central-1.amazonaws.com/focusboard/focus:latest
     depends_on:
       postgres:
         condition: service_healthy
     ports:
       - "8088:8088"
     environment:
-      QUARKUS_PROFILE: docker
+      QUARKUS_PROFILE: docker # Quarkus auto loads application-docker.yaml
     restart: unless-stopped
     networks:
       - default_network
@@ -61,6 +60,24 @@ services:
       retries: 10
     networks:
       - default_network
+
+  frontend:
+    container_name: frontend-app-prod
+    image: 758280076486.dkr.ecr.eu-central-1.amazonaws.com/focusboard/frontend:latest
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+
+      API_BASE_URL: "http://localhost:8088"
+      APP_VERSION: "local"
+    depends_on:
+      - focus
+    networks:
+      - default_network
+    restart: unless-stopped
 
 volumes:
   auth_db_data:
