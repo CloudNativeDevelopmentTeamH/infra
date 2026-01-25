@@ -1,0 +1,37 @@
+services:
+  auth_database:
+    container_name: auth-postgres-prod
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME?missing db name}
+      POSTGRES_USER: ${DB_USERNAME?missing db username}
+      POSTGRES_PASSWORD: ${DB_PASSWORD?missing db password}
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+    networks:
+      - auth_network
+  
+  auth_app:
+    container_name: auth-app-prod
+    image: 758280076486.dkr.ecr.eu-central-1.amazonaws.com/focusboard/auth:latest
+    environment:
+      DB_HOST: auth_database
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME?missing db name}
+      DB_USERNAME: ${DB_USERNAME?missing db username}
+      DB_PASSWORD: ${DB_PASSWORD?missing db password}
+      JWT_SECRET: ${JWT_SECRET?missing jwt secret}
+      PEPPER: ${PEPPER?missing pepper}
+      PORT: ${PORT?missing app port}
+      GRPC_PORT: ${GRPC_PORT?missing grpc port}
+    depends_on:
+      - auth_database
+    networks:
+      - auth_network
+
+volumes:
+  auth_db_data:
+
+networks:
+  auth_network:
+    driver: bridge
