@@ -31,7 +31,7 @@ cd docker
 docker compose up
 ```
 
-4. **Initial Database Setup**
+4. **(!not necessary!) Initial Database Setup:**
 
 After the services are running, set up the database schema using Drizzle:
 
