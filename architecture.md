@@ -111,6 +111,10 @@ graph TB
         Browser[Web Browser<br/>localhost:3000]
 
         subgraph Docker["Docker Compose"]
+            subgraph Proxy["Reverse Proxy"]
+                Nginx[Nginx<br/>Port 80/443]
+            end
+            
             subgraph Services["Application Services"]
                 LocalFrontend[Frontend Container<br/>Next.js<br/>Port 3000]
                 LocalAuth[Auth Service Container<br/>Node.js/TypeScript<br/>Port 4000 HTTP<br/>Port 50051 gRPC]
@@ -137,11 +141,12 @@ graph TB
     Dev -->|Access App| Browser
 
     %% User flows
-    Browser -->|HTTP| LocalFrontend
-
-    %% Browser to services
-    Browser -->|API Calls<br/>Port 4000| LocalAuth
-    Browser -->|API Calls<br/>Port 8088| LocalFocus
+    Browser -->|HTTP| Nginx
+    
+    %% Nginx routing
+    Nginx -->|Routes /| LocalFrontend
+    Nginx -->|Routes /auth| LocalAuth
+    Nginx -->|Routes /focus| LocalFocus
 
     %% Service communication
     LocalFocus -.->|gRPC Auth<br/>Port 50051| LocalAuth
@@ -155,6 +160,7 @@ graph TB
     LocalFocusDB --> FocusData
 
     %% Network
+    Nginx -.->|Connected| Bridge
     LocalFrontend -.->|Connected| Bridge
     LocalAuth -.->|Connected| Bridge
     LocalFocus -.->|Connected| Bridge
@@ -163,6 +169,7 @@ graph TB
 
     style Dev fill:#ce93d8,stroke:#6a1b9a,stroke-width:3px
     style Browser fill:#ab47bc,stroke:#4a148c,stroke-width:3px
+    style Nginx fill:#ff9800,stroke:#e65100,stroke-width:3px
     style LocalFrontend fill:#42a5f5,stroke:#0d47a1,stroke-width:3px
     style LocalAuth fill:#66bb6a,stroke:#1b5e20,stroke-width:3px
     style LocalFocus fill:#26a69a,stroke:#00695c,stroke-width:3px
