@@ -51,8 +51,11 @@ services:
       - auth_database
     ports:
       - "${PORT}:${PORT}"
+      - "${GRPC_PORT}:${GRPC_PORT}"
     networks:
-      - default_network
+      default_network:
+        aliases:
+          - auth
 
   focus:
     container_name: focus-app-prod
@@ -80,7 +83,7 @@ services:
       POSTGRES_USER: focus
       POSTGRES_PASSWORD: focus
     ports:
-      - "5431:5431"
+      - "5431:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
