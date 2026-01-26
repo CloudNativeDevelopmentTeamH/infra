@@ -54,9 +54,7 @@ services:
       - "${PORT}:${PORT}"
       - "${GRPC_PORT}:${GRPC_PORT}"
     networks:
-      default_network:
-        aliases:
-          - auth
+      - default_network
 
   focus:
     container_name: focus-app-prod
