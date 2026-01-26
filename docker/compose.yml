@@ -47,6 +47,7 @@ services:
       PEPPER: ${PEPPER?missing pepper}
       PORT: ${PORT?missing app port}
       GRPC_PORT: ${GRPC_PORT?missing grpc port}
+      CORS_ORIGIN: "http://localhost:3000,http://localhost:8088"
     depends_on:
       - auth_database
     ports:
