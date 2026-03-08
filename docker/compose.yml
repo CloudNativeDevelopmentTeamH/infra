@@ -24,38 +24,58 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD?missing db password}
     volumes:
       - auth_db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
     networks:
       - default_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  auth_queue:
+    container_name: auth-queue
+    image: rabbitmq:4.0-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER?missing rabbitmq user}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD?missing rabbitmq password}
     ports:
-      - ${DB_PORT?missing app port}:${DB_PORT?missing app port}
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   auth_app:
     container_name: auth-app-prod
     image: 758280076486.dkr.ecr.eu-central-1.amazonaws.com/focusboard/auth:latest
     environment:
       DB_HOST: auth_database
-      DB_PORT: ${DB_PORT?missing db port}
+      DB_PORT: 5432
       DB_NAME: ${DB_NAME?missing db name}
       DB_USERNAME: ${DB_USERNAME?missing db username}
       DB_PASSWORD: ${DB_PASSWORD?missing db password}
       JWT_SECRET: ${JWT_SECRET?missing jwt secret}
       PEPPER: ${PEPPER?missing pepper}
-      PORT: ${PORT?missing app port}
-      GRPC_PORT: ${GRPC_PORT?missing grpc port}
+      PORT: 4000
+      GRPC_PORT: 50051
       CORS_ORIGIN: "http://localhost:3000,http://localhost:8088"
+      RABBITMQ_HOST: auth_queue
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER?missing rabbitmq user}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD?missing rabbitmq password}
+    ports:
+      - "4000:4000"
+      - "50051:50051"
+    networks:
+      - default_network
     depends_on:
       auth_database:
         condition: service_healthy
-    ports:
-      - "${PORT}:${PORT}"
-      - "${GRPC_PORT}:${GRPC_PORT}"
-    networks:
-      - default_network
+      auth_queue:
+        condition: service_healthy
 
   focus:
     container_name: focus-app-prod
@@ -82,8 +102,6 @@ services:
       POSTGRES_DB: focus
       POSTGRES_USER: focus
       POSTGRES_PASSWORD: focus
-    ports:
-      - "5431:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

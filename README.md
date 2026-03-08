@@ -7,15 +7,15 @@
 1. **Set up environment variables** - Create a `.env` file in the `docker` directory:
 
 ```env
-PORT=3000
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=your_password
-DB_NAME=auth_db
 JWT_SECRET=your_jwt_secret_key
 PEPPER=your_password_pepper
-GRPC_PORT=50051
+
+DB_NAME=auth
+DB_USERNAME=test
+DB_PASSWORD=test
+
+RABBITMQ_USER=test
+RABBITMQ_PASSWORD=test
 ```
 
 2. **Authenticate with ECR** (required before pulling images):
