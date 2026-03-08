@@ -31,14 +31,4 @@ cd docker
 docker compose up
 ```
 
-4. **(!not necessary!) Initial Database Setup:**
-
-After the services are running, set up the database schema using Drizzle:
-
-```bash
-# Navigate to the auth service directory
-# Push the schema to the database
-npx drizzle-kit push
-```
-
 **Note**: ECR authentication tokens are valid for 12 hours. You'll need to re-authenticate after that period.
