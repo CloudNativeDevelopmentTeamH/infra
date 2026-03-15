@@ -19,7 +19,7 @@ services:
     container_name: auth-postgres-prod
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: ${DB_NAME?missing db name}
+      POSTGRES_DB: auth
       POSTGRES_USER: ${DB_USERNAME?missing db username}
       POSTGRES_PASSWORD: ${DB_PASSWORD?missing db password}
     volumes:
@@ -27,7 +27,7 @@ services:
     networks:
       - default_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d auth"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -41,6 +41,8 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD?missing rabbitmq password}
     ports:
       - "15672:15672"
+    networks:
+      - default_network
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
@@ -54,7 +56,7 @@ services:
     environment:
       DB_HOST: auth_database
       DB_PORT: 5432
-      DB_NAME: ${DB_NAME?missing db name}
+      DB_NAME: auth
       DB_USERNAME: ${DB_USERNAME?missing db username}
       DB_PASSWORD: ${DB_PASSWORD?missing db password}
       JWT_SECRET: ${JWT_SECRET?missing jwt secret}
@@ -76,6 +78,26 @@ services:
         condition: service_healthy
       auth_queue:
         condition: service_healthy
+
+  auth_email:
+    container_name: email-app-prod
+    image: 758280076486.dkr.ecr.eu-central-1.amazonaws.com/focusboard/email:latest
+    environment:
+      RABBITMQ_HOST: auth_queue
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER?missing rabbitmq user}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD?missing rabbitmq password}
+      SMTP_HOST: ${SMTP_HOST?missing smtp host}
+      SMTP_PORT: ${SMTP_PORT?missing smtp port}
+      SMTP_USER: ${SMTP_USER?missing smtp user}
+      SMTP_PASS: ${SMTP_PASS?missing smtp pass}
+      SMTP_FROM: ${SMTP_FROM?missing smtp from}
+    networks:
+      - default_network
+    depends_on:
+      auth_queue:
+        condition: service_healthy
+    restart: unless-stopped
 
   focus:
     container_name: focus-app-prod

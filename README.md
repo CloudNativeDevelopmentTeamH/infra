@@ -10,12 +10,17 @@
 JWT_SECRET=your_jwt_secret_key
 PEPPER=your_password_pepper
 
-DB_NAME=auth
-DB_USERNAME=test
-DB_PASSWORD=test
+DB_USERNAME=user
+DB_PASSWORD=password
 
-RABBITMQ_USER=test
-RABBITMQ_PASSWORD=test
+RABBITMQ_USER=user
+RABBITMQ_PASSWORD=password
+
+SMTP_HOST=sandbox.smtp.mailtrap.io
+SMTP_PORT=2525
+SMTP_USER=user
+SMTP_PASS=password
+SMTP_FROM=noreply@focusboard.app
 ```
 
 2. **Authenticate with ECR** (required before pulling images):
