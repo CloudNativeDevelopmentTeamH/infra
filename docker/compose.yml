@@ -52,7 +52,7 @@ services:
 
   auth_app:
     container_name: auth-app-prod
-    image: 758280076486.dkr.ecr.eu-central-1.amazonaws.com/focusboard/auth:latest
+    image: ghcr.io/cloudnativedevelopmentteamh/focusboard/auth:latest
     environment:
       DB_HOST: auth_database
       DB_PORT: 5432
@@ -81,7 +81,7 @@ services:
 
   auth_email:
     container_name: email-app-prod
-    image: 758280076486.dkr.ecr.eu-central-1.amazonaws.com/focusboard/email:latest
+    image: ghcr.io/cloudnativedevelopmentteamh/focusboard/email:latest
     environment:
       RABBITMQ_HOST: auth_queue
       RABBITMQ_PORT: 5672
