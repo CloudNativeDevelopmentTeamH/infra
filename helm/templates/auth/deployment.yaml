@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+  namespace: {{ .Values.namespace | quote  }}
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: {{ .Values.auth.name }}
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.auth.name }}
+    spec:
+      initContainers:
+        - name: wait-for-dependencies
+          image: busybox:1.36
+          command: ['sh', '-c']
+          args:
+            - >
+              echo "Waiting for PostgreSQL...";
+              until nc -z -w 2 {{ .Values.postgres.serviceName }}.{{ .Values.namespace }}.svc.cluster.local {{ .Values.postgres.port }}; do
+                sleep 2;
+              done;
+              echo "Waiting for RabbitMQ...";
+              until nc -z -w 2 {{ .Values.rabbitmq.serviceName }}.{{ .Values.namespace }}.svc.cluster.local {{ .Values.rabbitmq.port }}; do
+                sleep 2;
+              done;
+              echo "Dependencies are ready!";
+
+      imagePullSecrets:
+        - name: {{ .Values.backend.pullSecret.name }}
+            
+      containers:
+       - name: {{ .Values.auth.name }}
+         image: "{{ .Values.auth.image.repository }}:{{ .Values.auth.image.tag }}"
+         ports:
+          - containerPort: {{ .Values.auth.port }}
+            name: http
+            protocol: TCP
+         envFrom:
+         - configMapRef:
+             name: {{ .Values.auth.configmap.name }}
+         - secretRef:
+             name: {{ .Values.secrets.name }}
+             

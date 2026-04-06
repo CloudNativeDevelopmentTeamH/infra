@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.postgres.configmap.name }}
+  namespace: {{ .Values.namespace | quote  }}
+data:
+  POSTGRES_DB: {{ .Values.postgres.database }}
+  
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.auth.configmap.name }}
+  namespace: {{ .Values.namespace | quote }}
+data:
+  # Database configuration
+  DB_HOST: "{{ .Values.postgres.serviceName }}.{{ .Values.namespace }}.svc.cluster.local"
+  DB_PORT: {{ .Values.postgres.port | quote }}
+  DB_NAME: {{ .Values.postgres.database | quote }}
+  
+  # Application configuration
+  PORT: {{ .Values.auth.port | quote }}
+  GRPC_PORT: {{ .Values.auth.grpcPort | quote }}
+  CORS_ORIGIN: {{ .Values.auth.env.corsOrigin | quote }}
+
+  # RabbitMQ configuration
+  RABBITMQ_HOST: "{{ .Values.rabbitmq.serviceName }}.{{ .Values.namespace }}.svc.cluster.local"
+  RABBITMQ_PORT: {{ .Values.rabbitmq.port | quote }}

@@ -2,5 +2,4 @@
 .env
 
 # Secret files
-*secrets.yaml
-*secret.yaml
+secret_values.yaml

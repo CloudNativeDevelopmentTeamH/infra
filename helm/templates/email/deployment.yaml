@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-deployment
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.email.replicas }}
+
+  selector:
+    matchLabels:
+      app: {{ .Values.email.name }}
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.email.name }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.backend.pullSecret.name }}
+      containers:
+        - name: {{ .Values.email.name }}
+          image: "{{ .Values.email.image.repository }}:{{ .Values.email.image.tag }}"
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.email.configmap.name }}
+            - secretRef:
+                name: {{ .Values.secrets.name }}

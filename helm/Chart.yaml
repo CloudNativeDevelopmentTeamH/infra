@@ -1,0 +1,6 @@
+apiVersion: v2
+name: FocusBoard
+description: FocusBoard - A simple and efficient task management tool for teams.
+type: application
+version: 0.1.0
+icon: https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.svg

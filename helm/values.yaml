@@ -1,0 +1,54 @@
+﻿namespace: backend
+
+# App configuration
+auth:
+  name: auth-app
+  port: 4000
+  grpcPort: 50051
+  image:
+    repository: ghcr.io/cloudnativedevelopmentteamh/focusboard/auth
+    tag: latest
+  replicas: 2
+  env:
+    corsOrigin: "https://k8s-frontend-frontend-fe6f13f88d-1209588435.eu-central-1.elb.amazonaws.com,https://k8s-focus-focusing-a37b3eb8d5-2089895283.eu-central-1.elb.amazonaws.com"
+  configmap:
+    name: auth-config
+
+email:
+  name: email-app
+  image:
+    repository: ghcr.io/cloudnativedevelopmentteamh/focusboard/email
+    tag: latest
+  replicas: 1
+  smtp:
+    host: "sandbox.smtp.mailtrap.io"
+    port: 2525
+    from: "noreply@focusboard.app"
+  configmap:
+    name: email-config
+
+# PostgreSQL configuration
+postgres:
+  serviceName: database
+  port: 5432
+  image:
+    repository: postgres
+    tag: "16-alpine"
+  database: "auth"
+  persistence:
+    claimName: postgres-pvc
+    size: 1Gi
+  configmap:
+    name: postgres-config
+
+# RabbitMQ configuration
+rabbitmq:
+  serviceName: rabbitmq
+  port: 5672
+  managementPort: 15672
+  image:
+    repository: rabbitmq
+    tag: "4.0-management-alpine"
+  persistence:
+    claimName: rabbitmq-pvc
+    size: 1Gi
