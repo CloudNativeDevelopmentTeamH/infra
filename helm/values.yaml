@@ -1,6 +1,6 @@
 ﻿namespace: backend
 
-# App configuration
+# Auth service configuration
 auth:
   name: auth-app
   port: 4000
@@ -27,7 +27,7 @@ email:
   configmap:
     name: email-config
 
-# PostgreSQL configuration
+# Auth service PostgreSQL configuration
 postgres:
   serviceName: database
   port: 5432
@@ -41,7 +41,7 @@ postgres:
   configmap:
     name: postgres-config
 
-# RabbitMQ configuration
+# Auth service RabbitMQ configuration
 rabbitmq:
   serviceName: rabbitmq
   port: 5672
