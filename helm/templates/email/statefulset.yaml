@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq-statefulset
+  namespace: {{ .Values.namespace | quote }}
+spec:
+  serviceName: {{ .Values.rabbitmq.serviceName }}
+
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+
+    spec:
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ .Values.rabbitmq.persistence.claimName }}
+      containers:
+
+      - name: rabbitmq
+        image: "{{ .Values.rabbitmq.image.repository }}:{{ .Values.rabbitmq.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.rabbitmq.port }}
+          name: amqp
+        - containerPort: {{ .Values.rabbitmq.managementPort }}
+          name: management
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/rabbitmq
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secrets.name }}
+              key: RABBITMQ_USER
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secrets.name }}
+              key: RABBITMQ_PASSWORD

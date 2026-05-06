@@ -30,22 +30,3 @@ spec:
     - port: {{ .Values.postgres.port }}
       targetPort: {{ .Values.postgres.port }}
       name: postgres
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: "{{ .Values.rabbitmq.serviceName }}"
-  namespace: {{ .Values.namespace | quote }}
-spec:
-  type: ClusterIP
-  clusterIP: None  # Headless service for StatefulSet
-  selector:
-    app: rabbitmq
-  ports:
-    - port: {{ .Values.rabbitmq.port }}
-      targetPort: {{ .Values.rabbitmq.port }}
-      name: amqp
-    - port: {{ .Values.rabbitmq.managementPort }}
-      targetPort: {{ .Values.rabbitmq.managementPort }}
-      name: management
