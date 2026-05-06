@@ -24,4 +24,4 @@ spec:
             - configMapRef:
                 name: {{ .Values.email.configmap.name }}
             - secretRef:
-                name: {{ .Values.secrets.name }}
+                name: {{ .Values.auth_secrets.name }}

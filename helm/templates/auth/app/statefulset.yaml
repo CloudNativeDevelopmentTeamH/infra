@@ -39,10 +39,10 @@ spec:
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.secrets.name }}
+              name: {{ .Values.auth_secrets.name }}
               key: DB_PASSWORD
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.secrets.name }}
+              name: {{ .Values.auth_secrets.name }}
               key: DB_USERNAME

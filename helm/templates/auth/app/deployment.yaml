@@ -45,5 +45,5 @@ spec:
          - configMapRef:
              name: {{ .Values.auth.configmap.name }}
          - secretRef:
-             name: {{ .Values.secrets.name }}
+             name: {{ .Values.auth_secrets.name }}
              

@@ -37,10 +37,10 @@ spec:
         - name: RABBITMQ_DEFAULT_USER
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.secrets.name }}
+              name: {{ .Values.auth_secrets.name }}
               key: RABBITMQ_USER
         - name: RABBITMQ_DEFAULT_PASS
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.secrets.name }}
+              name: {{ .Values.auth_secrets.name }}
               key: RABBITMQ_PASSWORD
