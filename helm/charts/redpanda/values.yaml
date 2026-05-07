@@ -1,0 +1,30 @@
+enabled: true
+image:
+  repository: docker.redpanda.com/redpandadata/redpanda
+  tag: v25.1.2
+replicaCount: 1
+persistence:
+  enabled: true
+  size: 1Gi
+  storageClass: ""
+service:
+  type: ClusterIP
+  port: 9092
+  outsidePort: 19092
+  adminPort: 9644
+commandArgs: |
+  --overprovisioned
+  --smp 1
+  --memory 1G
+  --reserve-memory 0M
+  --node-id 0
+  --check=false
+  --kafka-addr PLAINTEXT://0.0.0.0:9092,OUTSIDE://0.0.0.0:19092
+  --advertise-kafka-addr PLAINTEXT://redpanda:9092,OUTSIDE://localhost:19092
+  --pandaproxy-addr 0.0.0.0:8082
+  --advertise-pandaproxy-addr redpanda:8082
+topicInit:
+  enabled: true
+  name: focus.events
+  partitions: 3
+  replicas: 1

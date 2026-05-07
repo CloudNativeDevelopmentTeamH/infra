@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.analytics.configmap.name }}
+  namespace: {{ .Values.namespace | quote }}
+data:
+  PORT: {{ .Values.analytics.port | quote }}
+  GRPC_PORT: {{ .Values.analytics.grpcPort | quote }}
+  KAFKA_BROKERS: {{ .Values.analytics.env.KAFKA_BROKERS | quote }}
+  KAFKA_TOPIC: {{ .Values.analytics.env.KAFKA_TOPIC | quote }}
+  KAFKA_GROUP_ID: {{ .Values.analytics.env.KAFKA_GROUP_ID | quote }}
+  STORE_BACKEND: {{ .Values.analytics.env.STORE_BACKEND | quote }}
+  POSTGRES_DSN: {{ .Values.analytics.env.POSTGRES_DSN | quote }}
+  CONFIG_PATH: {{ .Values.analytics.env.CONFIG_PATH | quote }}

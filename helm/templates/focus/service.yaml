@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.focus.name }}-service"
+  namespace: focus
+spec:
+  type: {{ .Values.focus.service.type }}
+  selector:
+    app: {{ .Values.focus.name }}
+  ports:
+    - port: {{ .Values.focus.service.port }}
+      targetPort: {{ .Values.focus.port }}
+      name: http

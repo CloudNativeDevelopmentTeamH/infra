@@ -1,6 +1,8 @@
 ﻿namespace: backend
 
+# -------------------------
 # Auth service configuration
+# -------------------------
 auth:
   name: auth-app
   port: 4000
@@ -27,8 +29,10 @@ email:
   configmap:
     name: email-config
 
+# -------------------------
 # Auth service PostgreSQL configuration
-postgres:
+# -------------------------
+auth_postgres:
   serviceName: database
   port: 5432
   image:
@@ -41,7 +45,9 @@ postgres:
   configmap:
     name: postgres-config
 
+# -------------------------
 # Auth service RabbitMQ configuration
+# -------------------------
 rabbitmq:
   serviceName: rabbitmq
   port: 5672
@@ -52,3 +58,234 @@ rabbitmq:
   persistence:
     claimName: rabbitmq-pvc
     size: 1Gi
+
+# -------------------------
+# Focus application
+# -------------------------
+focus:
+  name: focus
+
+  # Container image settings
+  image:
+    repository: ghcr.io/cloudnativedevelopmentteamh/focusboard/focus
+    tag: latest
+
+  # Deployment configuration
+  port: 8088
+  replicas: 2
+
+  # Probes
+  probes:
+    liveness:
+      # /healthz
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 2
+      failureThreshold: 3
+    readiness:
+      # /readyz
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 2
+      failureThreshold: 5
+
+  # Resources
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  # HPA
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 75
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 0
+        selectPolicy: Max
+        policies:
+          percent:
+            value: 100
+            periodSeconds: 60
+          pods:
+            value: 4
+            periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 300
+        selectPolicy: Max
+        policies:
+          percent:
+            value: 50
+            periodSeconds: 60
+
+  # Service settings
+  service:
+    port: 80
+    type: ClusterIP
+
+# -------------------------
+# Focus Quarkus env
+# -------------------------
+quarkus:
+  http:
+    port: 8088
+    cors:
+      enabled: true
+      origins: "http://k8s-frontend-frontend-fe6f13f88d-1209588435.eu-central-1.elb.amazonaws.com,https://k8s-frontend-frontend-fe6f13f88d-1209588435.eu-central-1.elb.amazonaws.com,http://k8s-auth-authingr-e5aa653333-252007710.eu-central-1.elb.amazonaws.com,https://k8s-auth-authingr-e5aa653333-252007710.eu-central-1.elb.amazonaws.com"
+      methods: "GET,PUT,POST,DELETE,OPTIONS"
+      headers: "origin,content-type,accept,authorization,x-csrf-token"
+      accessControlAllowCredentials: true
+
+  grpc:
+    clients:
+      auth:
+        host: auth-app-service.auth.svc.cluster.local
+        port: 50051
+        plainText: true
+        useQuarkusGrpcClient: true
+
+  hibernateOrm:
+    enabled: true
+    schemaManagement:
+      strategy: validate
+    log:
+      sql: true
+    packages: "de.thi.focus.frameworksdrivers.persistence.jpa"
+
+  flyway:
+    migrateAtStart: true
+    locations: "db/migration"
+    baselineOnMigrate: "true"
+    validateOnMigrate: "false"
+
+  datasource:
+    dbKind: postgresql
+    jdbc:
+      url: "jdbc:postgresql://postgres:5432/focus"
+
+# Application specific configuration
+focusApp:
+  constraints:
+    note:
+      maxLength: 1000
+    category:
+      name:
+        maxLength: 50
+  defaults:
+    categoryColor: "#FFFFFF"
+
+# -------------------------
+# Focus Postgres
+# -------------------------
+focus_postgres:
+  serviceName: focus_postgres
+
+  image:
+    repository: postgres
+    tag: "16-alpine"
+
+  port: 5432
+  database: focus
+  user: focus
+  persistence:
+    enabled: true
+    claimName: db-pv-claim
+    storageClassName: ebs-sc
+    size: 1Gi
+
+# -------------------------
+# Frontend
+# -------------------------
+frontend:
+  name: frontend-app
+  port: 3000
+  image:
+    repository: ghcr.io/cloudnativedevelopmentteamh/focusboard/frontend
+    tag: latest
+  replicas: 2
+
+  # Environment configuration
+  env:
+    apiBaseUrl: "https://k8s-focus-focusing-a37b3eb8d5-2089895283.eu-central-1.elb.amazonaws.com" #TODO: Replace with actual URL after deployment
+    authApiBaseUrl: "https://k8s-auth-authingr-e5aa653333-252007710.eu-central-1.elb.amazonaws.com" #TODO: Replace with actual URL after deployment
+    appVersion: "1.0.0"
+
+# -------------------------
+# Analytics service
+# -------------------------
+analytics:
+  name: analytics
+  port: 8080
+  grpcPort: 9090
+  image:
+    repository: ghcr.io/cloudnativedevelopmentteamh/focusboard/analytics
+    tag: latest
+  replicas: 1
+  env:
+    KAFKA_BROKERS: "kafka:9092"
+    KAFKA_TOPIC: "focus.events"
+    KAFKA_GROUP_ID: "analytics-service"
+    STORE_BACKEND: "postgres"
+    POSTGRES_DSN: "postgres://analytics:analytics@postgres:5432/analytics?sslmode=disable"
+    CONFIG_PATH: "config/application.yml"
+  configmap:
+    name: analytics-config
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  probes:
+    liveness:
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 2
+      failureThreshold: 3
+    readiness:
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 2
+      failureThreshold: 3
+
+# -------------------------
+# Redpanda (vendored chart)
+# -------------------------
+redpanda:
+  enabled: true
+  image:
+    repository: docker.redpanda.com/redpandadata/redpanda
+    tag: v25.1.2
+  replicaCount: 1
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: ""
+  service:
+    type: ClusterIP
+    port: 9092
+    outsidePort: 19092
+    adminPort: 9644
+  commandArgs: |
+    --overprovisioned
+    --smp 1
+    --memory 1G
+    --reserve-memory 0M
+    --node-id 0
+    --check=false
+    --kafka-addr PLAINTEXT://0.0.0.0:9092,OUTSIDE://0.0.0.0:19092
+    --advertise-kafka-addr PLAINTEXT://redpanda:9092,OUTSIDE://localhost:19092
+    --pandaproxy-addr 0.0.0.0:8082
+    --advertise-pandaproxy-addr redpanda:8082
+  topicInit:
+    enabled: true
+    name: focus.events
+    partitions: 3
+    replicas: 1

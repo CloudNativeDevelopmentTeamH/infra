@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: focus
+  namespace: focus
+  labels:
+    app: {{ .Values.focus.name }}
+spec:
+  replicas: {{ .Values.focus.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.focus.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.focus.name }}
+    spec:
+      serviceAccountName: {{ .Values.focus.serviceAccount.name }}
+      containers:
+        - name: {{ .Values.focus.name }}
+          image: "{{ .Values.focus.image.repository }}:{{ .Values.focus.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.focus.port }}
+              name: http
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.focus.port }}
+            initialDelaySeconds: {{ .Values.focus.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.focus.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.focus.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.focus.probes.liveness.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: {{ .Values.focus.port }}
+            initialDelaySeconds: {{ .Values.focus.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.focus.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.focus.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.focus.probes.readiness.failureThreshold }}
+          resources:
+            requests:
+              cpu: {{ .Values.focus.resources.requests.cpu }}
+              memory: {{ .Values.focus.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.focus.resources.limits.cpu }}
+              memory: {{ .Values.focus.resources.limits.memory }}
+          envFrom:
+            - configMapRef:
+                name: focus-config
+            - secretRef:
+                name: focus-secrets

@@ -1,0 +1,19 @@
+{{- if .Values.topicInit.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: redpanda-topic-init
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: topic-init
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command:
+            - /bin/sh
+            - -c
+            - >-
+              rpk topic create {{ .Values.topicInit.name }} --brokers redpanda:9092 --partitions {{ .Values.topicInit.partitions }} --replicas {{ .Values.topicInit.replicas }} || true
+  backoffLimit: 4
+{{- end }}

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: analytics-statefulset
+  namespace: {{ .Values.namespace | quote }}
+spec:
+  serviceName: {{ .Values.analytics.name }}
+
+  replicas: {{ .Values.analytics.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.analytics.name }}
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.analytics.name }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.pullSecret.name }}
+      containers:
+      - name: {{ .Values.analytics.name }}
+        image: "{{ .Values.analytics.image.repository }}:{{ .Values.analytics.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.analytics.port }}
+          name: http
+        - containerPort: {{ .Values.analytics.grpcPort }}
+          name: grpc
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.analytics.configmap.name }}

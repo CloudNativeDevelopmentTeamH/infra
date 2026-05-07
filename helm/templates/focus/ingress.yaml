@@ -1,0 +1,16 @@
+{{- if .Values.focus.ingress.enabled }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: "{{ .Values.focus.name }}-ingress"
+  namespace: {{ .Values.namespace | quote  }}
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`focus.localhost`)
+      services:
+        - name: "{{ .Values.focus.name }}-service"
+          port: {{ .Values.focus.service.port }}
+{{- end }}

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.analytics.name }}-service"
+  namespace: {{ .Values.namespace | quote }}
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Values.analytics.name }}
+  ports:
+    - port: {{ .Values.analytics.port }}
+      targetPort: {{ .Values.analytics.port }}
+      name: http
+    - port: {{ .Values.analytics.grpcPort }}
+      targetPort: {{ .Values.analytics.grpcPort }}
+      name: grpc

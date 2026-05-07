@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: focus-config
+  namespace: focus
+  labels:
+    app: focus
+data:
+  # HTTP Server configuration
+  QUARKUS_HTTP_PORT: {{ .Values.quarkus.http.port | quote }}
+  QUARKUS_HTTP_CORS_ENABLED: {{ .Values.quarkus.http.cors.enabled | quote }}
+  QUARKUS_HTTP_CORS_ORIGINS: {{ .Values.quarkus.http.cors.origins | quote }}
+  QUARKUS_HTTP_CORS_METHODS: {{ .Values.quarkus.http.cors.methods | quote }}
+  QUARKUS_HTTP_CORS_HEADERS: {{ .Values.quarkus.http.cors.headers | quote }}
+  QUARKUS_HTTP_CORS_ACCESS_CONTROL_ALLOW_CREDENTIALS: {{ .Values.quarkus.http.cors.accessControlAllowCredentials | quote }}
+
+  # gRPC Client configuration for Auth service
+  QUARKUS_GRPC_CLIENTS_AUTH_HOST: {{ .Values.quarkus.grpc.clients.auth.host | quote }}
+  QUARKUS_GRPC_CLIENTS_AUTH_PORT: {{ .Values.quarkus.grpc.clients.auth.port | quote }}
+  QUARKUS_GRPC_CLIENTS_AUTH_PLAIN_TEXT: {{ .Values.quarkus.grpc.clients.auth.plainText | quote }}
+  QUARKUS_GRPC_CLIENTS_AUTH_USE_QUARKUS_GRPC_CLIENT: {{ .Values.quarkus.grpc.clients.auth.useQuarkusGrpcClient | quote }}
+
+  # Hibernate ORM configuration
+  QUARKUS_HIBERNATE_ORM_ENABLED: {{ .Values.quarkus.hibernateOrm.enabled | quote }}
+  QUARKUS_HIBERNATE_ORM_SCHEMA_MANAGEMENT_STRATEGY: {{ .Values.quarkus.hibernateOrm.schemaManagement.strategy | quote }}
+  QUARKUS_HIBERNATE_ORM_LOG_SQL: {{ .Values.quarkus.hibernateOrm.log.sql | quote }}
+  QUARKUS_HIBERNATE_ORM_PACKAGES: {{ .Values.quarkus.hibernateOrm.packages | quote }}
+
+  # Flyway configuration
+  QUARKUS_FLYWAY_MIGRATE_AT_START: {{ .Values.quarkus.flyway.migrateAtStart | quote }}
+  QUARKUS_FLYWAY_LOCATIONS: {{ .Values.quarkus.flyway.locations | quote }}
+  QUARKUS_FLYWAY_BASELINE_ON_MIGRATE: {{ .Values.quarkus.flyway.baselineOnMigrate | quote }}
+  QUARKUS_FLYWAY_VALIDATE_ON_MIGRATE: {{ .Values.quarkus.flyway.validateOnMigrate | quote }}
+
+  # Datasource configuration
+  QUARKUS_DATASOURCE_DB_KIND: {{ .Values.quarkus.datasource.dbKind | quote }}
+  QUARKUS_DATASOURCE_JDBC_URL: {{ .Values.quarkus.datasource.jdbc.url | quote }}
+
+  # Focus application specific configuration
+  FOCUS_CONSTRAINTS_NOTE_MAX_LENGTH: {{ .Values.focusApp.constraints.note.maxLength | quote }}
+  FOCUS_CONSTRAINTS_CATEGORY_NAME_MAX_LENGTH: {{ .Values.focusApp.constraints.category.name.maxLength | quote }}
+  FOCUS_DEFAULTS_CATEGORY_COLOR: {{ .Values.focusApp.defaults.categoryColor | quote }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: focus
+data:
+  POSTGRES_DB: {{ .Values.focus_postgres.database | quote }}
+  POSTGRES_USER: {{ .Values.focus_postgres.user | quote }}

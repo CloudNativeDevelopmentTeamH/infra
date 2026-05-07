@@ -1,0 +1,47 @@
+{{- if .Values.focus.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: focus-hpa
+  namespace: focus
+  labels:
+    app: {{ .Values.focus.name }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.focus.name }}
+  minReplicas: {{ .Values.focus.hpa.minReplicas }}
+  maxReplicas: {{ .Values.focus.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.focus.hpa.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.focus.hpa.targetMemoryUtilizationPercentage }}
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: {{ .Values.focus.hpa.behavior.scaleUp.stabilizationWindowSeconds }}
+      policies:
+        - type: Percent
+          value: {{ .Values.focus.hpa.behavior.scaleUp.policies.percent.value }}
+          periodSeconds: {{ .Values.focus.hpa.behavior.scaleUp.policies.percent.periodSeconds }}
+        - type: Pods
+          value: {{ .Values.focus.hpa.behavior.scaleUp.policies.pods.value }}
+          periodSeconds: {{ .Values.focus.hpa.behavior.scaleUp.policies.pods.periodSeconds }}
+      selectPolicy: {{ .Values.focus.hpa.behavior.scaleUp.selectPolicy | quote }}
+    scaleDown:
+      stabilizationWindowSeconds: {{ .Values.focus.hpa.behavior.scaleDown.stabilizationWindowSeconds }}
+      policies:
+        - type: Percent
+          value: {{ .Values.focus.hpa.behavior.scaleDown.policies.percent.value }}
+          periodSeconds: {{ .Values.focus.hpa.behavior.scaleDown.policies.percent.periodSeconds }}
+      selectPolicy: {{ .Values.focus.hpa.behavior.scaleDown.selectPolicy | quote }}
+{{- end }}

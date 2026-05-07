@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: {{ .Values.namespace }}
+data:
+  API_BASE_URL: {{ .Values.frontend.env.apiBaseUrl | quote }}
+  AUTH_API_BASE_URL: {{ .Values.frontend.env.authApiBaseUrl | quote }}
+  APP_VERSION: {{ .Values.frontend.env.appVersion | quote }}
