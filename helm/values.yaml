@@ -1,6 +1,13 @@
 namespace: backend
 
 # -------------------------
+# Auth secrets
+# -------------------------
+auth_secrets:
+  name: auth_secrets
+  values: {}
+
+# -------------------------
 # Auth service configuration
 # -------------------------
 auth:
@@ -227,12 +234,14 @@ frontend:
 # -------------------------
 focus_secrets:
   name: focus-secrets
+  values: {}
 
 # -------------------------
 # Analytics secrets
 # -------------------------
 analytics_secrets:
   name: analytics-secrets
+  values: {}
 
 # -------------------------
 # Analytics service
