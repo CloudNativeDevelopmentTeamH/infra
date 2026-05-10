@@ -4,7 +4,7 @@ metadata:
   name: auth-postgres-statefulset
   namespace: {{ .Values.namespace | quote }}
 spec:
-  serviceName: {{ .Values.auth_postgres.serviceName | replace "_" "-" | lower }}
+  serviceName: {{ .Values.auth.postgres.serviceName }}
 
   replicas: 1
   selector:
@@ -19,30 +19,30 @@ spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: {{ .Values.auth_postgres.persistence.claimName }}
+          claimName: {{ .Values.auth.postgres.persistence.claimName }}
 
       containers:
       - name: postgres
-        image: "{{ .Values.auth_postgres.image.repository }}:{{ .Values.auth_postgres.image.tag }}"
+        image: "{{ .Values.auth.postgres.image.repository }}:{{ .Values.auth.postgres.image.tag }}"
         ports:
-        - containerPort: {{ .Values.auth_postgres.port }}
+        - containerPort: {{ .Values.auth.postgres.port }}
           name: postgres
         volumeMounts:
           - name: data
             mountPath: /var/lib/postgresql/data
         envFrom:
         - configMapRef:
-            name: {{ .Values.auth_postgres.configmap.name }}
+            name: {{ .Values.auth.postgres.configmap.name }}
         env:
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.auth_secrets.name | replace "_" "-" | lower }}
+              name: {{ .Values.auth.secrets.name }}
               key: DB_PASSWORD
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.auth_secrets.name | replace "_" "-" | lower }}
+              name: {{ .Values.auth.secrets.name }}
               key: DB_USERNAME

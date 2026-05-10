@@ -1,13 +1,6 @@
 namespace: backend
 
 # -------------------------
-# Auth secrets
-# -------------------------
-auth_secrets:
-  name: auth_secrets
-  values: {}
-
-# -------------------------
 # Auth service configuration
 # -------------------------
 auth:
@@ -22,6 +15,21 @@ auth:
     corsOrigin: "https://k8s-frontend-frontend-fe6f13f88d-1209588435.eu-central-1.elb.amazonaws.com,https://k8s-focus-focusing-a37b3eb8d5-2089895283.eu-central-1.elb.amazonaws.com"
   configmap:
     name: auth-config
+  secrets:
+    name: auth-secrets
+    values: {}
+  postgres:
+    serviceName: database
+    port: 5432
+    image:
+      repository: postgres
+      tag: "16-alpine"
+    database: "auth"
+    persistence:
+      claimName: postgres-pvc
+      size: 1Gi
+    configmap:
+      name: postgres-config
 
 email:
   name: email-app
@@ -35,22 +43,6 @@ email:
     from: "noreply@focusboard.app"
   configmap:
     name: email-config
-
-# -------------------------
-# Auth service PostgreSQL configuration
-# -------------------------
-auth_postgres:
-  serviceName: database
-  port: 5432
-  image:
-    repository: postgres
-    tag: "16-alpine"
-  database: "auth"
-  persistence:
-    claimName: postgres-pvc
-    size: 1Gi
-  configmap:
-    name: postgres-config
 
 # -------------------------
 # Auth service RabbitMQ configuration
@@ -140,6 +132,28 @@ focus:
     port: 80
     type: ClusterIP
 
+  # Secrets
+  secrets:
+    name: focus-secrets
+    values: {}
+
+  # PostgreSQL
+  postgres:
+    serviceName: focus-postgres
+
+    image:
+      repository: postgres
+      tag: "16-alpine"
+
+    port: 5432
+    database: focus
+    user: focus
+    persistence:
+      enabled: true
+      claimName: db-pv-claim
+      storageClassName: ebs-sc
+      size: 1Gi
+
 # -------------------------
 # Focus Quarkus env
 # -------------------------
@@ -192,25 +206,6 @@ focusApp:
     categoryColor: "#FFFFFF"
 
 # -------------------------
-# Focus Postgres
-# -------------------------
-focus_postgres:
-  serviceName: focus_postgres
-
-  image:
-    repository: postgres
-    tag: "16-alpine"
-
-  port: 5432
-  database: focus
-  user: focus
-  persistence:
-    enabled: true
-    claimName: db-pv-claim
-    storageClassName: ebs-sc
-    size: 1Gi
-
-# -------------------------
 # Frontend
 # -------------------------
 frontend:
@@ -228,20 +223,6 @@ frontend:
     apiBaseUrl: "https://k8s-focus-focusing-a37b3eb8d5-2089895283.eu-central-1.elb.amazonaws.com" #TODO: Replace with actual URL after deployment
     authApiBaseUrl: "https://k8s-auth-authingr-e5aa653333-252007710.eu-central-1.elb.amazonaws.com" #TODO: Replace with actual URL after deployment
     appVersion: "1.0.0"
-
-# -------------------------
-# Focus secrets
-# -------------------------
-focus_secrets:
-  name: focus-secrets
-  values: {}
-
-# -------------------------
-# Analytics secrets
-# -------------------------
-analytics_secrets:
-  name: analytics-secrets
-  values: {}
 
 # -------------------------
 # Analytics service
@@ -281,23 +262,22 @@ analytics:
       periodSeconds: 5
       timeoutSeconds: 2
       failureThreshold: 3
+  secrets:
+    name: analytics-secrets
+    values: {}
+  postgres:
+    serviceName: analytics-postgres
 
-# -------------------------
-# Analytics PostgreSQL configuration
-# -------------------------
-analytics_postgres:
-  serviceName: analytics-postgres
+    image:
+      repository: postgres
+      tag: "16-alpine"
 
-  image:
-    repository: postgres
-    tag: "16-alpine"
-
-  port: 5432
-  database: analytics
-  user: analytics
-  persistence:
-    claimName: analytics-postgres-pvc
-    size: 1Gi
+    port: 5432
+    database: analytics
+    user: analytics
+    persistence:
+      claimName: analytics-postgres-pvc
+      size: 1Gi
 
 # -------------------------
 # Redpanda (vendored chart)

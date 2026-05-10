@@ -56,4 +56,4 @@ spec:
             - configMapRef:
                 name: {{ .Values.analytics.configmap.name }}
             - secretRef:
-                name: {{ .Values.analytics_secrets.name | replace "_" "-" | lower }}
+                name: {{ .Values.analytics.secrets.name }}

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.auth_postgres.persistence.claimName }}
+  name: {{ .Values.auth.postgres.persistence.claimName }}
   namespace: {{ .Values.namespace | quote }}
 spec:
   accessModes:
@@ -9,7 +9,7 @@ spec:
   storageClassName: local-path
   resources:
     requests:
-      storage: {{ .Values.auth_postgres.persistence.size }}
+      storage: {{ .Values.auth.postgres.persistence.size }}
 
 ---
 apiVersion: v1

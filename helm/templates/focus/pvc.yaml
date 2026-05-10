@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.focus_postgres.persistence.claimName }}
+  name: {{ .Values.focus.postgres.persistence.claimName }}
   namespace: {{ .Values.namespace | quote }}
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: {{ .Values.focus_postgres.persistence.storageClassName | default "ebs-sc" }}
+  storageClassName: {{ .Values.focus.postgres.persistence.storageClassName | default "ebs-sc" }}
   resources:
     requests:
-      storage: {{ .Values.focus_postgres.persistence.size | default "1Gi" }}
+      storage: {{ .Values.focus.postgres.persistence.size | default "1Gi" }}

@@ -4,5 +4,5 @@ metadata:
   name: analytics-postgres-config
   namespace: {{ .Values.namespace | quote }}
 data:
-  POSTGRES_DB: {{ .Values.analytics_postgres.database | quote }}
-  POSTGRES_USER: {{ .Values.analytics_postgres.user | quote }}
+  POSTGRES_DB: {{ .Values.analytics.postgres.database | quote }}
+  POSTGRES_USER: {{ .Values.analytics.postgres.user | quote }}

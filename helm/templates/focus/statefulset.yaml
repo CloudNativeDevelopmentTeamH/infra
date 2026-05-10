@@ -4,7 +4,7 @@ metadata:
   name: focus-postgres-statefulset
   namespace: {{ .Values.namespace | quote }}
 spec:
-  serviceName: {{ .Values.focus_postgres.serviceName | replace "_" "-" | lower }}
+  serviceName: {{ .Values.focus.postgres.serviceName }}
 
   replicas: 1
   selector:
@@ -19,13 +19,13 @@ spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: {{ .Values.focus_postgres.persistence.claimName }}
+          claimName: {{ .Values.focus.postgres.persistence.claimName }}
 
       containers:
       - name: postgres
-        image: "{{ .Values.focus_postgres.image.repository }}:{{ .Values.focus_postgres.image.tag }}"
+        image: "{{ .Values.focus.postgres.image.repository }}:{{ .Values.focus.postgres.image.tag }}"
         ports:
-        - containerPort: {{ .Values.focus_postgres.port }}
+        - containerPort: {{ .Values.focus.postgres.port }}
         volumeMounts:
           - name: data
             mountPath: /var/lib/postgresql/data
@@ -38,5 +38,5 @@ spec:
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.focus_secrets.name }}
+              name: {{ .Values.focus.secrets.name }}
               key: DB_PASSWORD

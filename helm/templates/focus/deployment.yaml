@@ -52,4 +52,4 @@ spec:
             - configMapRef:
                 name: focus-config
             - secretRef:
-                name: {{ .Values.focus_secrets.name }}
+                name: {{ .Values.focus.secrets.name }}

@@ -47,5 +47,5 @@ metadata:
   name: postgres-config
   namespace: {{ .Values.namespace | quote }}
 data:
-  POSTGRES_DB: {{ .Values.focus_postgres.database | quote }}
-  POSTGRES_USER: {{ .Values.focus_postgres.user | quote }}
+  POSTGRES_DB: {{ .Values.focus.postgres.database | quote }}
+  POSTGRES_USER: {{ .Values.focus.postgres.user | quote }}

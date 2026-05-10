@@ -4,7 +4,7 @@ metadata:
   name: analytics-postgres
   namespace: {{ .Values.namespace | quote }}
 spec:
-  serviceName: {{ .Values.analytics_postgres.serviceName | quote }}
+  serviceName: {{ .Values.analytics.postgres.serviceName | quote }}
 
   replicas: 1
   selector:
@@ -19,13 +19,13 @@ spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: {{ .Values.analytics_postgres.persistence.claimName }}
+          claimName: {{ .Values.analytics.postgres.persistence.claimName }}
 
       containers:
       - name: postgres
-        image: "{{ .Values.analytics_postgres.image.repository }}:{{ .Values.analytics_postgres.image.tag }}"
+        image: "{{ .Values.analytics.postgres.image.repository }}:{{ .Values.analytics.postgres.image.tag }}"
         ports:
-        - containerPort: {{ .Values.analytics_postgres.port }}
+        - containerPort: {{ .Values.analytics.postgres.port }}
           name: postgres
         volumeMounts:
           - name: data
@@ -37,4 +37,4 @@ spec:
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         - name: POSTGRES_PASSWORD
-          value: {{ .Values.analytics_postgres.user | quote }}
+          value: {{ .Values.analytics.postgres.user | quote }}

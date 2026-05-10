@@ -11,6 +11,6 @@ data:
   KAFKA_GROUP_ID: {{ .Values.analytics.env.KAFKA_GROUP_ID | quote }}
   STORE_BACKEND: {{ .Values.analytics.env.STORE_BACKEND | quote }}
   CONFIG_PATH: {{ .Values.analytics.env.CONFIG_PATH | quote }}
-  POSTGRES_HOST: {{ .Values.analytics_postgres.serviceName | quote }}
-  POSTGRES_PORT: {{ .Values.analytics_postgres.port | quote }}
-  POSTGRES_DB: {{ .Values.analytics_postgres.database | quote }}
+  POSTGRES_HOST: {{ .Values.analytics.postgres.serviceName | quote }}
+  POSTGRES_PORT: {{ .Values.analytics.postgres.port | quote }}
+  POSTGRES_DB: {{ .Values.analytics.postgres.database | quote }}

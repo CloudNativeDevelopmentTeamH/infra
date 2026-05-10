@@ -22,7 +22,7 @@ spec:
           args:
             - >
               echo "Waiting for PostgreSQL...";
-              until nc -z -w 2 {{ .Values.auth_postgres.serviceName }}.{{ .Values.namespace }}.svc.cluster.local {{ .Values.auth_postgres.port }}; do
+              until nc -z -w 2 {{ .Values.auth.postgres.serviceName }}.{{ .Values.namespace }}.svc.cluster.local {{ .Values.auth.postgres.port }}; do
                 sleep 2;
               done;
               echo "Waiting for RabbitMQ...";
@@ -45,5 +45,5 @@ spec:
          - configMapRef:
              name: {{ .Values.auth.configmap.name }}
          - secretRef:
-             name: {{ .Values.auth_secrets.name | replace "_" "-" | lower }}
+             name: {{ .Values.auth.secrets.name }}
 
