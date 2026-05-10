@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: focus-config
-  namespace: focus
+  namespace: {{ .Values.namespace | quote }}
   labels:
     app: focus
 data:
@@ -45,7 +45,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: postgres-config
-  namespace: focus
+  namespace: {{ .Values.namespace | quote }}
 data:
   POSTGRES_DB: {{ .Values.focus_postgres.database | quote }}
   POSTGRES_USER: {{ .Values.focus_postgres.user | quote }}

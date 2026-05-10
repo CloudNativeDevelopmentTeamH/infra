@@ -29,3 +29,5 @@ spec:
         envFrom:
         - configMapRef:
             name: {{ .Values.analytics.configmap.name }}
+        - secretRef:
+            name: {{ .Values.analytics_secrets.name | replace "_" "-" | lower }}

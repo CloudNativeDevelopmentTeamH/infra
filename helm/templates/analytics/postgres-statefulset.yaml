@@ -1,42 +1,40 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: focus-postgres-statefulset
+  name: analytics-postgres
   namespace: {{ .Values.namespace | quote }}
 spec:
-  serviceName: {{ .Values.focus_postgres.serviceName | replace "_" "-" | lower }}
+  serviceName: {{ .Values.analytics_postgres.serviceName | quote }}
 
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: analytics-postgres
 
   template:
     metadata:
       labels:
-        app: postgres
+        app: analytics-postgres
     spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: {{ .Values.focus_postgres.persistence.claimName }}
+          claimName: {{ .Values.analytics_postgres.persistence.claimName }}
 
       containers:
       - name: postgres
-        image: "{{ .Values.focus_postgres.image.repository }}:{{ .Values.focus_postgres.image.tag }}"
+        image: "{{ .Values.analytics_postgres.image.repository }}:{{ .Values.analytics_postgres.image.tag }}"
         ports:
-        - containerPort: {{ .Values.focus_postgres.port }}
+        - containerPort: {{ .Values.analytics_postgres.port }}
+          name: postgres
         volumeMounts:
           - name: data
             mountPath: /var/lib/postgresql/data
         envFrom:
         - configMapRef:
-            name: postgres-config
+            name: analytics-postgres-config
         env:
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.focus_secrets.name }}
-              key: DB_PASSWORD
+          value: {{ .Values.analytics_postgres.user | quote }}

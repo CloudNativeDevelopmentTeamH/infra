@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.analytics_postgres.serviceName | quote }}
+  namespace: {{ .Values.namespace | quote }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: analytics-postgres
+  ports:
+    - port: {{ .Values.analytics_postgres.port }}
+      targetPort: {{ .Values.analytics_postgres.port }}
+      name: postgres

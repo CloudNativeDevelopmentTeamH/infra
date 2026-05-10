@@ -1,4 +1,4 @@
-﻿namespace: backend
+namespace: backend
 
 # -------------------------
 # Auth service configuration
@@ -64,6 +64,10 @@ rabbitmq:
 # -------------------------
 focus:
   name: focus
+  serviceAccount:
+    name: focus-sa
+  ingress:
+    enabled: true
 
   # Container image settings
   image:
@@ -205,6 +209,8 @@ focus_postgres:
 frontend:
   name: frontend-app
   port: 3000
+  serviceAccount:
+    name: frontend-sa
   image:
     repository: ghcr.io/cloudnativedevelopmentteamh/focusboard/frontend
     tag: latest
@@ -215,6 +221,18 @@ frontend:
     apiBaseUrl: "https://k8s-focus-focusing-a37b3eb8d5-2089895283.eu-central-1.elb.amazonaws.com" #TODO: Replace with actual URL after deployment
     authApiBaseUrl: "https://k8s-auth-authingr-e5aa653333-252007710.eu-central-1.elb.amazonaws.com" #TODO: Replace with actual URL after deployment
     appVersion: "1.0.0"
+
+# -------------------------
+# Focus secrets
+# -------------------------
+focus_secrets:
+  name: focus-secrets
+
+# -------------------------
+# Analytics secrets
+# -------------------------
+analytics_secrets:
+  name: analytics-secrets
 
 # -------------------------
 # Analytics service
@@ -232,7 +250,7 @@ analytics:
     KAFKA_TOPIC: "focus.events"
     KAFKA_GROUP_ID: "analytics-service"
     STORE_BACKEND: "postgres"
-    POSTGRES_DSN: "postgres://analytics:analytics@postgres:5432/analytics?sslmode=disable"
+    POSTGRES_DSN: "postgres://analytics:analytics@analytics-postgres:5432/analytics?sslmode=disable"
     CONFIG_PATH: "config/application.yml"
   configmap:
     name: analytics-config
@@ -256,6 +274,23 @@ analytics:
       failureThreshold: 3
 
 # -------------------------
+# Analytics PostgreSQL configuration
+# -------------------------
+analytics_postgres:
+  serviceName: analytics-postgres
+
+  image:
+    repository: postgres
+    tag: "16-alpine"
+
+  port: 5432
+  database: analytics
+  user: analytics
+  persistence:
+    claimName: analytics-postgres-pvc
+    size: 1Gi
+
+# -------------------------
 # Redpanda (vendored chart)
 # -------------------------
 redpanda:
@@ -274,16 +309,15 @@ redpanda:
     outsidePort: 19092
     adminPort: 9644
   commandArgs: |
-    --overprovisioned
-    --smp 1
-    --memory 1G
-    --reserve-memory 0M
-    --node-id 0
+    --smp=1
+    --memory=1G
+    --reserve-memory=0M
+    --node-id=0
     --check=false
-    --kafka-addr PLAINTEXT://0.0.0.0:9092,OUTSIDE://0.0.0.0:19092
-    --advertise-kafka-addr PLAINTEXT://redpanda:9092,OUTSIDE://localhost:19092
-    --pandaproxy-addr 0.0.0.0:8082
-    --advertise-pandaproxy-addr redpanda:8082
+    --kafka-addr=PLAINTEXT://0.0.0.0:9092,OUTSIDE://0.0.0.0:19092
+    --advertise-kafka-addr=PLAINTEXT://redpanda:9092,OUTSIDE://localhost:19092
+    --pandaproxy-addr=0.0.0.0:8082
+    --advertise-pandaproxy-addr=redpanda:8082
   topicInit:
     enabled: true
     name: focus.events

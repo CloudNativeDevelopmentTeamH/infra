@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: "{{ .Values.focus.name }}-service"
-  namespace: focus
+  namespace: {{ .Values.namespace | quote }}
 spec:
   type: {{ .Values.focus.service.type }}
   selector:

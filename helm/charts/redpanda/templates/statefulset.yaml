@@ -26,15 +26,34 @@ spec:
       labels:
         app: redpanda
     spec:
+      initContainers:
+      - name: copy-redpanda-config
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command:
+          - /bin/sh
+          - -c
+          - cp /config-source/redpanda.yaml /etc/redpanda/redpanda.yaml
+        volumeMounts:
+        - name: config-source
+          mountPath: /config-source
+          readOnly: true
+        - name: redpanda-config
+          mountPath: /etc/redpanda
       containers:
       - name: redpanda
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
+        command:
+          - /opt/redpanda/bin/redpanda
         args:
-{{- range $arg := splitList "\n" .Values.commandArgs }}
-{{- if ne (trim $arg) "" }}
-          - {{ $arg | quote }}
-{{- end }}
-{{- end }}
+          - --redpanda-cfg
+          - /etc/redpanda/redpanda.yaml
+          - --smp=1
+          - --memory=1G
+          - --reserve-memory=0M
+          - --overprovisioned
         ports:
         - name: kafka
           containerPort: {{ .Values.service.port }}
@@ -45,3 +64,11 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /var/lib/redpanda/data
+        - name: redpanda-config
+          mountPath: /etc/redpanda
+      volumes:
+      - name: config-source
+        configMap:
+          name: {{ .Values.configMap.name }}
+      - name: redpanda-config
+        emptyDir: {}

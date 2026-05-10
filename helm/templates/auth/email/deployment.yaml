@@ -16,7 +16,7 @@ spec:
         app: {{ .Values.email.name }}
     spec:
       imagePullSecrets:
-        - name: {{ .Values.backend.pullSecret.name }}
+        - name: {{ .Values.pullSecret.name }}
       containers:
         - name: {{ .Values.email.name }}
           image: "{{ .Values.email.image.repository }}:{{ .Values.email.image.tag }}"
@@ -24,4 +24,4 @@ spec:
             - configMapRef:
                 name: {{ .Values.email.configmap.name }}
             - secretRef:
-                name: {{ .Values.auth_secrets.name }}
+                name: {{ .Values.auth_secrets.name | replace "_" "-" | lower }}

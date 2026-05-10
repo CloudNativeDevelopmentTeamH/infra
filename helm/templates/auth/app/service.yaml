@@ -19,7 +19,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{ .Values.postgres.serviceName }}"
+  name: "{{ .Values.auth_postgres.serviceName | replace "_" "-" | lower }}"
   namespace: {{ .Values.namespace | quote }}
 spec:
   type: ClusterIP
@@ -27,6 +27,6 @@ spec:
   selector:
     app: postgres
   ports:
-    - port: {{ .Values.postgres.port }}
-      targetPort: {{ .Values.postgres.port }}
+    - port: {{ .Values.auth_postgres.port }}
+      targetPort: {{ .Values.auth_postgres.port }}
       name: postgres

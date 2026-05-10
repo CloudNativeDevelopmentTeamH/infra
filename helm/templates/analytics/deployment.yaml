@@ -1,58 +1,59 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-	name: analytics
-	namespace: {{ .Values.namespace | quote }}
-	labels:
-		app: {{ .Values.analytics.name }}
+  name: analytics
+  namespace: {{ .Values.namespace | quote }}
+  labels:
+    app: {{ .Values.analytics.name }}
 spec:
-	replicas: {{ .Values.analytics.replicas }}
+  replicas: {{ .Values.analytics.replicas }}
 
-	selector:
-		matchLabels:
-			app: {{ .Values.analytics.name }}
+  selector:
+    matchLabels:
+      app: {{ .Values.analytics.name }}
 
-	template:
-		metadata:
-			labels:
-				app: {{ .Values.analytics.name }}
-		spec:
-			imagePullSecrets:
-				- name: {{ .Values.pullSecret.name }}
-			containers:
-				- name: {{ .Values.analytics.name }}
-					image: "{{ .Values.analytics.image.repository }}:{{ .Values.analytics.image.tag }}"
-					ports:
-						- containerPort: {{ .Values.analytics.port }}
-							name: http
-							protocol: TCP
-						- containerPort: {{ .Values.analytics.grpcPort }}
-							name: grpc
-							protocol: TCP
-					livenessProbe:
-						httpGet:
-							path: /healthz
-							port: {{ .Values.analytics.port }}
-						initialDelaySeconds: {{ .Values.analytics.probes.liveness.initialDelaySeconds }}
-						periodSeconds: {{ .Values.analytics.probes.liveness.periodSeconds }}
-						timeoutSeconds: {{ .Values.analytics.probes.liveness.timeoutSeconds }}
-						failureThreshold: {{ .Values.analytics.probes.liveness.failureThreshold }}
-					readinessProbe:
-						httpGet:
-							path: /readyz
-							port: {{ .Values.analytics.port }}
-						initialDelaySeconds: {{ .Values.analytics.probes.readiness.initialDelaySeconds }}
-						periodSeconds: {{ .Values.analytics.probes.readiness.periodSeconds }}
-						timeoutSeconds: {{ .Values.analytics.probes.readiness.timeoutSeconds }}
-						failureThreshold: {{ .Values.analytics.probes.readiness.failureThreshold }}
-					resources:
-						requests:
-							cpu: {{ .Values.analytics.resources.requests.cpu }}
-							memory: {{ .Values.analytics.resources.requests.memory }}
-						limits:
-							cpu: {{ .Values.analytics.resources.limits.cpu }}
-							memory: {{ .Values.analytics.resources.limits.memory }}
-					envFrom:
-						- configMapRef:
-								name: {{ .Values.analytics.configmap.name }}
-
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.analytics.name }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.pullSecret.name }}
+      containers:
+        - name: {{ .Values.analytics.name }}
+          image: "{{ .Values.analytics.image.repository }}:{{ .Values.analytics.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.analytics.port }}
+              name: http
+              protocol: TCP
+            - containerPort: {{ .Values.analytics.grpcPort }}
+              name: grpc
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.analytics.port }}
+            initialDelaySeconds: {{ .Values.analytics.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.analytics.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.analytics.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.analytics.probes.liveness.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: {{ .Values.analytics.port }}
+            initialDelaySeconds: {{ .Values.analytics.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.analytics.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.analytics.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.analytics.probes.readiness.failureThreshold }}
+          resources:
+            requests:
+              cpu: {{ .Values.analytics.resources.requests.cpu }}
+              memory: {{ .Values.analytics.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.analytics.resources.limits.cpu }}
+              memory: {{ .Values.analytics.resources.limits.memory }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.analytics.configmap.name }}
+            - secretRef:
+                name: {{ .Values.analytics_secrets.name | replace "_" "-" | lower }}

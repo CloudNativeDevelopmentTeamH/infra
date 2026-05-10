@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.postgres.configmap.name }}
+  name: {{ .Values.auth_postgres.configmap.name }}
   namespace: {{ .Values.namespace | quote  }}
 data:
-  POSTGRES_DB: {{ .Values.postgres.database }}
-  
+  POSTGRES_DB: {{ .Values.auth_postgres.database }}
+
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -14,10 +14,10 @@ metadata:
   namespace: {{ .Values.namespace | quote }}
 data:
   # Database configuration
-  DB_HOST: "{{ .Values.postgres.serviceName }}.{{ .Values.namespace }}.svc.cluster.local"
-  DB_PORT: {{ .Values.postgres.port | quote }}
-  DB_NAME: {{ .Values.postgres.database | quote }}
-  
+  DB_HOST: "{{ .Values.auth_postgres.serviceName }}.{{ .Values.namespace }}.svc.cluster.local"
+  DB_PORT: {{ .Values.auth_postgres.port | quote }}
+  DB_NAME: {{ .Values.auth_postgres.database | quote }}
+
   # Application configuration
   PORT: {{ .Values.auth.port | quote }}
   GRPC_PORT: {{ .Values.auth.grpcPort | quote }}

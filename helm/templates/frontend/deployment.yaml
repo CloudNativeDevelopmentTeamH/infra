@@ -16,6 +16,8 @@ spec:
         app: {{ .Values.frontend.name }}
     spec:
       serviceAccountName: {{ .Values.frontend.serviceAccount.name }}
+      imagePullSecrets:
+        - name: {{ .Values.pullSecret.name }}
       containers:
        - name: {{ .Values.frontend.name }}
          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"

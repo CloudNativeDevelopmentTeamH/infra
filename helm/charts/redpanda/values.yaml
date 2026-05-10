@@ -12,17 +12,44 @@ service:
   port: 9092
   outsidePort: 19092
   adminPort: 9644
-commandArgs: |
-  --overprovisioned
-  --smp 1
-  --memory 1G
-  --reserve-memory 0M
-  --node-id 0
-  --check=false
-  --kafka-addr PLAINTEXT://0.0.0.0:9092,OUTSIDE://0.0.0.0:19092
-  --advertise-kafka-addr PLAINTEXT://redpanda:9092,OUTSIDE://localhost:19092
-  --pandaproxy-addr 0.0.0.0:8082
-  --advertise-pandaproxy-addr redpanda:8082
+configMap:
+  name: redpanda-config
+config:
+  config_file: /etc/redpanda/redpanda.yaml
+  redpanda:
+    data_directory: /var/lib/redpanda/data
+    node_id: 0
+    empty_seed_starts_cluster: true
+    developer_mode: true
+    seed_servers: []
+    rpc_server:
+      address: 0.0.0.0
+      port: 33145
+    advertised_rpc_api:
+      address: redpanda
+      port: 33145
+    admin:
+      - address: 0.0.0.0
+        port: 9644
+        name: admin
+    kafka_api:
+      - address: 0.0.0.0
+        port: 9092
+        name: kafka
+        authentication_method: none
+    advertised_kafka_api:
+      - address: redpanda
+        port: 9092
+        name: kafka
+  pandaproxy:
+    pandaproxy_api:
+      - address: 0.0.0.0
+        port: 8082
+        name: proxy
+    advertised_pandaproxy_api:
+      - address: redpanda
+        port: 8082
+        name: proxy
 topicInit:
   enabled: true
   name: focus.events

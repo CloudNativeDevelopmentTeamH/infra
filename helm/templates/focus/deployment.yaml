@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: focus
-  namespace: focus
+  namespace: {{ .Values.namespace | quote }}
   labels:
     app: {{ .Values.focus.name }}
 spec:
@@ -16,6 +16,8 @@ spec:
         app: {{ .Values.focus.name }}
     spec:
       serviceAccountName: {{ .Values.focus.serviceAccount.name }}
+      imagePullSecrets:
+        - name: {{ .Values.pullSecret.name }}
       containers:
         - name: {{ .Values.focus.name }}
           image: "{{ .Values.focus.image.repository }}:{{ .Values.focus.image.tag }}"
@@ -50,4 +52,4 @@ spec:
             - configMapRef:
                 name: focus-config
             - secretRef:
-                name: focus-secrets
+                name: {{ .Values.focus_secrets.name }}
