@@ -151,7 +151,8 @@ focus:
     persistence:
       enabled: true
       claimName: db-pv-claim
-      storageClassName: ebs-sc
+      # Use local-path for k3d local clusters. Override in real clusters if needed.
+      storageClassName: local-path
       size: 1Gi
 
 # -------------------------
