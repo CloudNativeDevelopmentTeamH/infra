@@ -16,7 +16,7 @@ spec:
         app: {{ .Values.auth.name }}
     spec:
       initContainers:
-        - name: wait-for-dependencies
+        - name: auth-wait-for-dependencies
           image: busybox:1.36
           command: ['sh', '-c']
           args:

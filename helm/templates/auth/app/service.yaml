@@ -25,7 +25,7 @@ spec:
   type: ClusterIP
   clusterIP: None  # Headless service for StatefulSet
   selector:
-    app: postgres
+    app: auth-postgres
   ports:
     - port: {{ .Values.auth.postgres.port }}
       targetPort: {{ .Values.auth.postgres.port }}

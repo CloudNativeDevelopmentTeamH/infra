@@ -6,7 +6,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: postgres
+    app: focus-postgres
   ports:
     - port: {{ .Values.focus.postgres.port }}
       targetPort: {{ .Values.focus.postgres.port }}

@@ -19,7 +19,7 @@ auth:
     name: auth-secrets
     values: {}
   postgres:
-    serviceName: database
+    serviceName: auth-postgres
     port: 5432
     image:
       repository: postgres

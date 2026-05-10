@@ -9,12 +9,12 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: auth-postgres
 
   template:
     metadata:
       labels:
-        app: postgres
+        app: auth-postgres
     spec:
       volumes:
       - name: data

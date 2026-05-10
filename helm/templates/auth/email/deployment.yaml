@@ -16,7 +16,7 @@ spec:
         app: {{ .Values.email.name }}
     spec:
       initContainers:
-      - name: wait-for-dependencies
+      - name: email-wait-for-dependencies
         image: busybox:1.36
         command: ['sh', '-c']
         args:
