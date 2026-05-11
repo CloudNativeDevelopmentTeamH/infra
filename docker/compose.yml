@@ -74,9 +74,7 @@ services:
       auth_queue:
         condition: service_healthy
     networks:
-      default_network:
-        aliases:
-          - auth
+      - default_network
 
   auth_email:
     image: ghcr.io/cloudnativedevelopmentteamh/focusboard/email:latest
