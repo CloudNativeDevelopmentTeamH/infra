@@ -223,7 +223,7 @@ frontend:
   # Environment configuration
   env:
     apiBaseUrl: ""
-    authApiBaseUrl: "{{ .Values.auth.host }}"
+    authApiBaseUrl: "http://{{ .Values.auth.host }}"
     appVersion: "1.0.0"
 
   host: frontend.localhost
