@@ -63,8 +63,6 @@ rabbitmq:
 # -------------------------
 focus:
   name: focus
-  serviceAccount:
-    name: focus-sa
   ingress:
     enabled: true
 
@@ -163,7 +161,7 @@ quarkus:
     port: 8088
     cors:
       enabled: true
-      origins: "http://k8s-frontend-frontend-fe6f13f88d-1209588435.eu-central-1.elb.amazonaws.com,https://k8s-frontend-frontend-fe6f13f88d-1209588435.eu-central-1.elb.amazonaws.com,http://k8s-auth-authingr-e5aa653333-252007710.eu-central-1.elb.amazonaws.com,https://k8s-auth-authingr-e5aa653333-252007710.eu-central-1.elb.amazonaws.com"
+      origins: ""
       methods: "GET,PUT,POST,DELETE,OPTIONS"
       headers: "origin,content-type,accept,authorization,x-csrf-token"
       accessControlAllowCredentials: true
@@ -212,17 +210,15 @@ focusApp:
 frontend:
   name: frontend-app
   port: 3000
-  serviceAccount:
-    name: frontend-sa
   image:
     repository: ghcr.io/cloudnativedevelopmentteamh/focusboard/frontend
     tag: latest
-  replicas: 2
+  replicas: 1
 
   # Environment configuration
   env:
-    apiBaseUrl: "https://k8s-focus-focusing-a37b3eb8d5-2089895283.eu-central-1.elb.amazonaws.com" #TODO: Replace with actual URL after deployment
-    authApiBaseUrl: "https://k8s-auth-authingr-e5aa653333-252007710.eu-central-1.elb.amazonaws.com" #TODO: Replace with actual URL after deployment
+    apiBaseUrl: ""
+    authApiBaseUrl: ""
     appVersion: "1.0.0"
 
 # -------------------------

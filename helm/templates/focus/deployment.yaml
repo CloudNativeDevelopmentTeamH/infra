@@ -15,7 +15,6 @@ spec:
       labels:
         app: {{ .Values.focus.name }}
     spec:
-      serviceAccountName: {{ .Values.focus.serviceAccount.name }}
       imagePullSecrets:
         - name: {{ .Values.pullSecret.name }}
       containers:
