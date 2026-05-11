@@ -88,7 +88,7 @@ focus:
       failureThreshold: 3
     readiness:
       # /readyz
-      initialDelaySeconds: 120
+      initialDelaySeconds: 15
       periodSeconds: 10
       timeoutSeconds: 2
       failureThreshold: 5
@@ -262,7 +262,7 @@ analytics:
       timeoutSeconds: 2
       failureThreshold: 3
     readiness:
-      initialDelaySeconds: 120
+      initialDelaySeconds: 5
       periodSeconds: 5
       timeoutSeconds: 2
       failureThreshold: 3
