@@ -12,7 +12,7 @@ auth:
     tag: latest
   replicas: 2
   env:
-    corsOrigin: "http://auth.localhost"
+    corsOrigin: "http://frontend.localhost"
   configmap:
     name: auth-config
   secrets:
@@ -165,7 +165,7 @@ quarkus:
     port: 8088
     cors:
       enabled: true
-      origins: "http://auth.localhost"
+      origins: "http://frontend.localhost"
       methods: "GET,PUT,POST,DELETE,OPTIONS"
       headers: "origin,content-type,accept,authorization,x-csrf-token"
       accessControlAllowCredentials: true
@@ -223,7 +223,7 @@ frontend:
   # Environment configuration
   env:
     apiBaseUrl: ""
-    authApiBaseUrl: "http://{{ .Values.auth.host }}"
+    authApiBaseUrl: "http://auth.localhost"
     appVersion: "1.0.0"
 
   host: frontend.localhost
