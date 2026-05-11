@@ -12,7 +12,7 @@ auth:
     tag: latest
   replicas: 2
   env:
-    corsOrigin: "http://frontend.localhost"
+    corsOrigin: "https://frontend.localhost"
   configmap:
     name: auth-config
   secrets:
