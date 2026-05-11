@@ -15,6 +15,26 @@ spec:
       labels:
         app: {{ .Values.focus.name }}
     spec:
+      initContainers:
+        - name: focus-wait-for-dependencies
+          image: busybox:1.36
+          command: ['sh', '-c']
+          args:
+            - >
+              echo "Waiting for Focus PostgreSQL...";
+              until nc -z -w 2 {{ .Values.focus.postgres.serviceName }}.{{ .Values.namespace }}.svc.cluster.local {{ .Values.focus.postgres.port }}; do
+                sleep 2;
+              done;
+              echo "Waiting for Auth gRPC...";
+              until nc -z -w 2 {{ .Values.auth.name }}-service.{{ .Values.namespace }}.svc.cluster.local {{ .Values.auth.grpcPort }}; do
+                sleep 2;
+              done;
+              echo "Waiting for Analytics gRPC...";
+              until nc -z -w 2 {{ .Values.analytics.name }}-service.{{ .Values.namespace }}.svc.cluster.local {{ .Values.analytics.grpcPort }}; do
+                sleep 2;
+              done;
+              echo "Dependencies are ready!";
+
       imagePullSecrets:
         - name: {{ .Values.pullSecret.name }}
       containers:
