@@ -16,6 +16,22 @@ spec:
         app: {{ .Values.frontend.name }}
 
     spec:
+      initContainers:
+        - name: frontend-wait-for-dependencies
+          image: busybox:1.36
+          command: ['sh', '-c']
+          args:
+            - >
+              echo "Waiting for Auth service...";
+              until nc -z -w 2 {{ .Values.auth.name }}-service.{{ .Values.namespace }}.svc.cluster.local {{ .Values.auth.port }}; do
+                sleep 2;
+              done;
+              echo "Waiting for Focus service...";
+              until nc -z -w 2 {{ .Values.focus.name }}-service.{{ .Values.namespace }}.svc.cluster.local {{ .Values.focus.service.port }}; do
+                sleep 2;
+              done;
+              echo "Dependencies are ready!";
+
       imagePullSecrets:
         - name: {{ .Values.pullSecret.name }}
 
