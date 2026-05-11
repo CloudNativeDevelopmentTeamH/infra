@@ -18,6 +18,9 @@ auth:
   secrets:
     name: auth-secrets
     values: {}
+
+  host: auth.localhost
+
   postgres:
     serviceName: auth-postgres
     port: 5432
@@ -209,6 +212,7 @@ focusApp:
 # Frontend
 # -------------------------
 frontend:
+  namespace: frontend
   name: frontend-app
   port: 3000
   image:
@@ -219,8 +223,10 @@ frontend:
   # Environment configuration
   env:
     apiBaseUrl: ""
-    authApiBaseUrl: ""
+    authApiBaseUrl: "{{ .Values.auth.host }}"
     appVersion: "1.0.0"
+
+  host: frontend.localhost
 
 # -------------------------
 # Analytics service

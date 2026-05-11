@@ -2,13 +2,13 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: frontend-ingress
-  namespace: {{ .Values.namespace | quote  }}
+  namespace: {{ .Values.frontend.namespace | quote  }}
 spec:
   entryPoints:
     - web
   routes:
     - kind: Rule
-      match: Host(`frontend.localhost`)
+      match: Host(`{{ .Values.frontend.host }}`)
       services:
         - name: "{{ .Values.frontend.name }}-service"
           port: {{ .Values.frontend.port }}

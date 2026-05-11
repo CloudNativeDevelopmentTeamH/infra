@@ -89,7 +89,7 @@ sops -d ./helm/secret_values.enc.yaml > ./helm/secret_values.yaml
 ### Deploy to Kubernetes
 
 ```bash
-helm install backend ./helm -n backend --create-namespace -f ./helm/secret_values.yaml
+helm install app ./helm -n backend --create-namespace -f ./helm/secret_values.yaml
 ```
 
 ### Update Deployment
@@ -97,7 +97,7 @@ helm install backend ./helm -n backend --create-namespace -f ./helm/secret_value
 To update the deployment with new configurations or image versions:
 
 ```bash
-helm upgrade backend ./helm -n backend -f ./helm/secret_values.yaml
+helm upgrade app ./helm -n backend -f ./helm/secret_values.yaml
 ```
 
 ### Uninstall
@@ -105,6 +105,6 @@ helm upgrade backend ./helm -n backend -f ./helm/secret_values.yaml
 To remove the deployment:
 
 ```bash
-helm uninstall backend -n backend
+helm uninstall app -n backend
 kubectl delete namespace backend
 ```

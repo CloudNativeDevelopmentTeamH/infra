@@ -8,7 +8,7 @@ spec:
     - web
   routes:
     - kind: Rule
-      match: Host(`auth.localhost`)
+      match: Host(`{{ .Values.auth.host }}`)
       services:
         - name: "{{ .Values.auth.name }}-service"
           port: {{ .Values.auth.port }}
