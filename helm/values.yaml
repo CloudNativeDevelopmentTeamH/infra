@@ -255,7 +255,7 @@ analytics:
       timeoutSeconds: 2
       failureThreshold: 3
     readiness:
-      initialDelaySeconds: 10
+      initialDelaySeconds: 120
       periodSeconds: 5
       timeoutSeconds: 2
       failureThreshold: 3
