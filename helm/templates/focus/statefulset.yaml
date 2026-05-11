@@ -35,8 +35,13 @@ spec:
         env:
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.focus.secrets.name }}
+              key: QUARKUS_DATASOURCE_USERNAME
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ .Values.focus.secrets.name }}
-              key: DB_PASSWORD
+              key: QUARKUS_DATASOURCE_PASSWORD
