@@ -17,6 +17,22 @@ spec:
       labels:
         app: {{ .Values.analytics.name }}
     spec:
+      initContainers:
+        - name: analytics-wait-for-dependencies
+          image: busybox:1.36
+          command: ['sh', '-c']
+          args:
+            - >
+              echo "Waiting for Analytics PostgreSQL...";
+              until nc -z -w 2 {{ .Values.analytics.postgres.serviceName }}.{{ .Values.namespace }}.svc.cluster.local {{ .Values.analytics.postgres.port }}; do
+                sleep 2;
+              done;
+              echo "Waiting for Redpanda Kafka...";
+              until nc -z -w 2 redpanda.{{ .Values.namespace }}.svc.cluster.local 9092; do
+                sleep 2;
+              done;
+              echo "Dependencies are ready!";
+
       imagePullSecrets:
         - name: {{ .Values.pullSecret.name }}
       containers:
