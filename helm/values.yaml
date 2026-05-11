@@ -165,7 +165,7 @@ quarkus:
     port: 8088
     cors:
       enabled: true
-      origins: "http://frontend.localhost"
+      origins: "https://frontend.localhost"
       methods: "GET,PUT,POST,DELETE,OPTIONS"
       headers: "origin,content-type,accept,authorization,x-csrf-token"
       accessControlAllowCredentials: true
@@ -223,7 +223,7 @@ frontend:
   # Environment configuration
   env:
     apiBaseUrl: ""
-    authApiBaseUrl: "http://auth.localhost"
+    authApiBaseUrl: "https://auth.localhost"
     appVersion: "1.0.0"
 
   host: frontend.localhost
