@@ -44,7 +44,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: postgres-config
+  name: {{ .Values.focus.postgres.configmap.name }}
   namespace: {{ .Values.namespace | quote }}
 data:
   POSTGRES_DB: {{ .Values.focus.postgres.database | quote }}

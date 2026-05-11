@@ -29,7 +29,7 @@ auth:
       claimName: postgres-pvc
       size: 1Gi
     configmap:
-      name: postgres-config
+      name: auth-postgres-config
 
 email:
   name: email-app
@@ -138,6 +138,8 @@ focus:
   # PostgreSQL
   postgres:
     serviceName: focus-postgres
+    configmap:
+      name: focus-postgres-config
 
     image:
       repository: postgres
