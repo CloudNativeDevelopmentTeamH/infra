@@ -145,7 +145,6 @@ focus:
 
     port: 5432
     database: focus
-    user: focus
     persistence:
       enabled: true
       claimName: db-pv-claim
