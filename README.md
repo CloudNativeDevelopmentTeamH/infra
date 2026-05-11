@@ -23,10 +23,18 @@ SMTP_PASS=password
 SMTP_FROM=noreply@focusboard.app
 ```
 
-2. **Authenticate with ECR** (required before pulling images):
+2. **Authenticate with private registries** (required before pulling images):
 
+**AWS**
 ```bash
 aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 758280076486.dkr.ecr.eu-central-1.amazonaws.com
+```
+
+**Docker Compose** (using gh CLI)
+```bash
+gh auth login
+gh auth refresh -h github.com -s read:packages,repo
+gh auth token | docker login ghcr.io --username $(gh api user --jq '.login') --password-stdin
 ```
 
 3. **Start the services**:
