@@ -12,7 +12,7 @@ auth:
     tag: latest
   replicas: 2
   env:
-    corsOrigin: "https://k8s-frontend-frontend-fe6f13f88d-1209588435.eu-central-1.elb.amazonaws.com,https://k8s-focus-focusing-a37b3eb8d5-2089895283.eu-central-1.elb.amazonaws.com"
+    corsOrigin: "http://auth.localhost"
   configmap:
     name: auth-config
   secrets:
@@ -165,7 +165,7 @@ quarkus:
     port: 8088
     cors:
       enabled: true
-      origins: ""
+      origins: "http://auth.localhost"
       methods: "GET,PUT,POST,DELETE,OPTIONS"
       headers: "origin,content-type,accept,authorization,x-csrf-token"
       accessControlAllowCredentials: true
