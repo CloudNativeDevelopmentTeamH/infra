@@ -34,7 +34,7 @@ data:
 
   # Datasource configuration
   QUARKUS_DATASOURCE_DB_KIND: {{ .Values.quarkus.datasource.dbKind | quote }}
-  QUARKUS_DATASOURCE_JDBC_URL: {{ .Values.quarkus.datasource.jdbc.url | quote }}
+  QUARKUS_DATASOURCE_JDBC_URL: "jdbc:postgresql://{{ .Values.focus.postgres.serviceName }}:{{ .Values.focus.postgres.port }}/{{ .Values.focus.postgres.database }}"
 
   # Focus application specific configuration
   FOCUS_CONSTRAINTS_NOTE_MAX_LENGTH: {{ .Values.focusApp.constraints.note.maxLength | quote }}
@@ -48,4 +48,3 @@ metadata:
   namespace: {{ .Values.namespace | quote }}
 data:
   POSTGRES_DB: {{ .Values.focus.postgres.database | quote }}
-  POSTGRES_USER: {{ .Values.focus.postgres.user | quote }}
