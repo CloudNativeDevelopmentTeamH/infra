@@ -20,6 +20,12 @@ data:
   QUARKUS_GRPC_CLIENTS_AUTH_PLAIN_TEXT: {{ .Values.quarkus.grpc.clients.auth.plainText | quote }}
   QUARKUS_GRPC_CLIENTS_AUTH_USE_QUARKUS_GRPC_CLIENT: {{ .Values.quarkus.grpc.clients.auth.useQuarkusGrpcClient | quote }}
 
+  # gRPC Client configuration for Analytics service
+  QUARKUS_GRPC_CLIENTS_ANALYTICS_HOST: {{ .Values.quarkus.grpc.clients.analytics.host | quote }}
+  QUARKUS_GRPC_CLIENTS_ANALYTICS_PORT: {{ .Values.quarkus.grpc.clients.analytics.port | quote }}
+  QUARKUS_GRPC_CLIENTS_ANALYTICS_PLAIN_TEXT: {{ .Values.quarkus.grpc.clients.analytics.plainText | quote }}
+  QUARKUS_GRPC_CLIENTS_ANALYTICS_USE_QUARKUS_GRPC_CLIENT: {{ .Values.quarkus.grpc.clients.analytics.useQuarkusGrpcClient | quote }}
+
   # Hibernate ORM configuration
   QUARKUS_HIBERNATE_ORM_ENABLED: {{ .Values.quarkus.hibernateOrm.enabled | quote }}
   QUARKUS_HIBERNATE_ORM_SCHEMA_MANAGEMENT_STRATEGY: {{ .Values.quarkus.hibernateOrm.schemaManagement.strategy | quote }}
@@ -36,10 +42,19 @@ data:
   QUARKUS_DATASOURCE_DB_KIND: {{ .Values.quarkus.datasource.dbKind | quote }}
   QUARKUS_DATASOURCE_JDBC_URL: "jdbc:postgresql://{{ .Values.focus.postgres.serviceName }}:{{ .Values.focus.postgres.port }}/{{ .Values.focus.postgres.database }}"
 
+  # Kafka configuration
+  FOCUS_EVENTS_KAFKA_BOOTSTRAP_SERVERS: "redpanda.{{ .Values.namespace }}.svc.cluster.local:9092"
+  FOCUS_EVENTS_KAFKA_TOPIC: "focus.events"
+
+  # Focus security configuration
+  FOCUS_SECURITY_SECURE_COOKIES: {{ .Values.focusApp.security.secureCookies | quote }}
+  FOCUS_SECURITY_CSRF_ENABLED: {{ .Values.focusApp.security.csrfEnabled | quote }}
+
   # Focus application specific configuration
   FOCUS_CONSTRAINTS_NOTE_MAX_LENGTH: {{ .Values.focusApp.constraints.note.maxLength | quote }}
   FOCUS_CONSTRAINTS_CATEGORY_NAME_MAX_LENGTH: {{ .Values.focusApp.constraints.category.name.maxLength | quote }}
   FOCUS_DEFAULTS_CATEGORY_COLOR: {{ .Values.focusApp.defaults.categoryColor | quote }}
+
 ---
 apiVersion: v1
 kind: ConfigMap

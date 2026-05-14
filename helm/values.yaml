@@ -188,6 +188,11 @@ quarkus:
         port: 50051
         plainText: true
         useQuarkusGrpcClient: true
+      analytics:
+        host: analytics-service.backend.svc.cluster.local
+        port: 9090
+        plainText: true
+        useQuarkusGrpcClient: true
 
   hibernateOrm:
     enabled: true
@@ -221,8 +226,6 @@ focusApp:
     csrfEnabled: false # browser ignores .localhost TLD root domain cookie https://curl.se/rfc/cookie_spec.html
   defaults:
     categoryColor: "#FFFFFF"
-  cookies:
-    rootDomain: ""
 
 # -------------------------
 # Frontend
