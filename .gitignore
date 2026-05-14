@@ -1,5 +1,7 @@
 # Environment files
 .env
+*.crt
+*.key
 
 # Secret files
 secret_values.yaml

@@ -85,37 +85,6 @@ The Helm chart provides a complete Kubernetes deployment including:
 
 The [values.yaml](helm/values.yaml) file contains all configurable parameters for all services:
 
-### TLS for websecure
-
-The Helm chart uses Traefik's `websecure` entryPoint for IngressRoutes. To avoid browser warnings, provide a trusted TLS certificate and reference it in Helm values.
-
-**Local development (mkcert):**
-
-```bash
-CERT_DIR="./tls"
-mkdir -p "$CERT_DIR"
-
-mkcert -install
-mkcert -key-file "$CERT_DIR/focusboard-local.key" -cert-file "$CERT_DIR/focusboard-local.crt" \
-	"frontend.localhost" \
-	"auth.localhost" \
-	"focus.localhost" \
-	"analytics.localhost" \
-	"rabbitmq.localhost"
-```
-
-Helm will create the TLS secret in both the backend and frontend namespaces using the name from `ingress.tls.secretName`.
-
-Set the secret name in [helm/values.yaml](helm/values.yaml):
-
-```yaml
-ingress:
-  tls:
-    secretName: "focusboard-local-tls"
-```
-
-**Production:** use cert-manager or your platform's TLS workflow, then set `ingress.tls.secretName` or `ingress.tls.certResolver`.
-
 ### Secrets Management
 
 The project includes an encrypted secrets file [secret_values.enc.yaml](helm/secret_values.enc.yaml) managed with [SOPS](https://github.com/getsops/sops).
@@ -131,10 +100,21 @@ sops -d ./helm/secret_values.enc.yaml > ./helm/secret_values.yaml
 ### Deploy to Kubernetes
 
 ```bash
+CERT_DIR="./tls"
+mkdir -p "$CERT_DIR"
+
+mkcert -install
+mkcert -key-file "$CERT_DIR/focusboard-local.key" -cert-file "$CERT_DIR/focusboard-local.crt" \
+	"frontend.localhost" \
+	"auth.localhost" \
+	"focus.localhost" \
+	"analytics.localhost" \
+	"rabbitmq.localhost"
+
 helm install app ./helm -n backend --create-namespace -f ./helm/secret_values.yaml \
   --set ingress.tls.create=true \
-  --set-file ingress.tls.crt="./tls/focusboard-local.crt" \
-  --set-file ingress.tls.key="tls/focusboard-local.key"
+  --set-file ingress.tls.crt="$CERT_DIR/focusboard-local.crt" \
+  --set-file ingress.tls.key="$CERT_DIR/focusboard-local.key"
 ```
 
 ### Update Deployment
@@ -154,4 +134,5 @@ To remove the deployment:
 ```bash
 helm uninstall app -n backend
 kubectl delete namespace backend
+kubectl delete namespace app
 ```
