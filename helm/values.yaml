@@ -113,8 +113,8 @@ focus:
     enabled: true
     minReplicas: 2
     maxReplicas: 10
-    targetCPUUtilizationPercentage: 70
-    targetMemoryUtilizationPercentage: 75
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 90
     behavior:
       scaleUp:
         stabilizationWindowSeconds: 0
