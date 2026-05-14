@@ -67,6 +67,7 @@ services:
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER?missing rabbitmq user}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD?missing rabbitmq password}
+      DOCKER_ENV: "true"
     ports:
       - "4000:4000"
       - "50051:50051"
