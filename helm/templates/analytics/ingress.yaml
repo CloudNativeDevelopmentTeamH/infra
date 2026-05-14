@@ -12,3 +12,12 @@ spec:
       services:
         - name: "{{ .Values.analytics.name }}-service"
           port: {{ .Values.analytics.port }}
+  {{ if or .Values.ingress.tls.secretName .Values.ingress.tls.certResolver }}
+  tls:
+    {{ if .Values.ingress.tls.secretName }}
+    secretName: {{ .Values.ingress.tls.secretName | quote }}
+    {{ end }}
+    {{ if .Values.ingress.tls.certResolver }}
+    certResolver: {{ .Values.ingress.tls.certResolver | quote }}
+    {{ end }}
+  {{ end }}

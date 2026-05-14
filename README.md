@@ -74,6 +74,43 @@ The Helm chart provides a complete Kubernetes deployment including:
 
 The [values.yaml](helm/values.yaml) file contains all configurable parameters for all services:
 
+### TLS for websecure
+
+The Helm chart uses Traefik's `websecure` entryPoint for IngressRoutes. To avoid browser warnings, provide a trusted TLS certificate and reference it in Helm values.
+
+**Local development (mkcert):**
+
+```bash
+CERT_DIR="/tmp/focusboard-tls"
+mkdir -p "$CERT_DIR"
+
+mkcert -install
+mkcert -key-file "$CERT_DIR/focusboard-local.key" -cert-file "$CERT_DIR/focusboard-local.crt" \
+	"frontend.localhost" \
+	"auth.localhost" \
+	"focus.localhost" \
+	"analytics.localhost" \
+	"rabbitmq.localhost"
+
+kubectl -n backend create secret tls focusboard-local-tls \
+	--key "$CERT_DIR/focusboard-local.key" \
+	--cert "$CERT_DIR/focusboard-local.crt"
+
+kubectl -n frontend create secret tls focusboard-local-tls \
+	--key "$CERT_DIR/focusboard-local.key" \
+	--cert "$CERT_DIR/focusboard-local.crt"
+```
+
+Set the secret name in [helm/values.yaml](helm/values.yaml):
+
+```yaml
+ingress:
+  tls:
+    secretName: "focusboard-local-tls"
+```
+
+**Production:** use cert-manager or your platform's TLS workflow, then set `ingress.tls.secretName` or `ingress.tls.certResolver`.
+
 ### Secrets Management
 
 The project includes an encrypted secrets file [secret_values.enc.yaml](helm/secret_values.enc.yaml) managed with [SOPS](https://github.com/getsops/sops).
