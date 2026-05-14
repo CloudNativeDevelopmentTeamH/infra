@@ -39,6 +39,8 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD?missing rabbitmq password}
     ports:
       - "15672:15672"
+    volumes:
+      - auth_queue_data:/var/lib/rabbitmq
     networks:
       - default_network
     healthcheck:
@@ -68,11 +70,22 @@ services:
     ports:
       - "4000:4000"
       - "50051:50051"
+    healthcheck:
+      test:
+        - "CMD"
+        - "node"
+        - "-e"
+        - "require('http').get('http://localhost:4000/health',res=>process.exit(res.statusCode===200?0:1)).on('error',()=>process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     depends_on:
       auth_database:
         condition: service_healthy
       auth_queue:
         condition: service_healthy
+    restart: unless-stopped
     networks:
       - default_network
 
@@ -91,6 +104,8 @@ services:
     networks:
       - default_network
     depends_on:
+      auth_app:
+        condition: service_healthy
       auth_queue:
         condition: service_healthy
     restart: unless-stopped
@@ -313,6 +328,7 @@ services:
 
 volumes:
   auth_db_data:
+  auth_queue_data:
   postgres_data:
   analytics_db_data:
   redpanda_data:

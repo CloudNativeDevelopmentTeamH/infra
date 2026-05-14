@@ -21,6 +21,8 @@ SMTP_PORT=2525
 SMTP_USER=user
 SMTP_PASS=password
 SMTP_FROM=noreply@focusboard.app
+
+DOCKER_ENV=true
 ```
 
 2. **Authenticate with private registries** (required before pulling images):
@@ -122,7 +124,10 @@ helm install app ./helm -n backend --create-namespace -f ./helm/secret_values.ya
 To update the deployment with new configurations or image versions:
 
 ```bash
-helm upgrade app ./helm -n backend -f ./helm/secret_values.yaml
+helm upgrade app ./helm -n backend -f ./helm/secret_values.yaml \
+  --set ingress.tls.create=true \
+  --set-file ingress.tls.crt="$CERT_DIR/focusboard-local.crt" \
+  --set-file ingress.tls.key="$CERT_DIR/focusboard-local.key"
 ```
 
 If you use `ingress.tls.create`, include the same `--set` and `--set-file` flags on `helm upgrade`.
