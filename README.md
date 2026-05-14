@@ -92,7 +92,7 @@ The Helm chart uses Traefik's `websecure` entryPoint for IngressRoutes. To avoid
 **Local development (mkcert):**
 
 ```bash
-CERT_DIR="/tmp/focusboard-tls"
+CERT_DIR="./tls"
 mkdir -p "$CERT_DIR"
 
 mkcert -install
@@ -133,8 +133,8 @@ sops -d ./helm/secret_values.enc.yaml > ./helm/secret_values.yaml
 ```bash
 helm install app ./helm -n backend --create-namespace -f ./helm/secret_values.yaml \
   --set ingress.tls.create=true \
-  --set-file ingress.tls.crt="$CERT_DIR/focusboard-local.crt" \
-  --set-file ingress.tls.key="$CERT_DIR/focusboard-local.key"
+  --set-file ingress.tls.crt="./tls/focusboard-local.crt" \
+  --set-file ingress.tls.key="tls/focusboard-local.key"
 ```
 
 ### Update Deployment
