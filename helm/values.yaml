@@ -184,7 +184,7 @@ quarkus:
   grpc:
     clients:
       auth:
-        host: auth-app-service.auth.svc.cluster.local
+        host: auth-app-service.backend.svc.cluster.local
         port: 50051
         plainText: true
         useQuarkusGrpcClient: true
@@ -216,8 +216,12 @@ focusApp:
     category:
       name:
         maxLength: 50
+  security:
+    secureCookies: true
   defaults:
     categoryColor: "#FFFFFF"
+  cookies:
+    rootDomain: ".localhost"
 
 # -------------------------
 # Frontend
