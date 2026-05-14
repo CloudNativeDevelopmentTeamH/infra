@@ -92,14 +92,13 @@ mkcert -key-file "$CERT_DIR/focusboard-local.key" -cert-file "$CERT_DIR/focusboa
 	"analytics.localhost" \
 	"rabbitmq.localhost"
 
-kubectl -n backend create secret tls focusboard-local-tls \
-	--key "$CERT_DIR/focusboard-local.key" \
-	--cert "$CERT_DIR/focusboard-local.crt"
-
-kubectl -n frontend create secret tls focusboard-local-tls \
-	--key "$CERT_DIR/focusboard-local.key" \
-	--cert "$CERT_DIR/focusboard-local.crt"
+helm install app ./helm -n backend --create-namespace -f ./helm/secret_values.yaml \
+  --set ingress.tls.create=true \
+  --set-file ingress.tls.crt="$CERT_DIR/focusboard-local.crt" \
+  --set-file ingress.tls.key="$CERT_DIR/focusboard-local.key"
 ```
+
+Helm will create the TLS secret in both the backend and frontend namespaces using the name from `ingress.tls.secretName`.
 
 Set the secret name in [helm/values.yaml](helm/values.yaml):
 
@@ -136,6 +135,8 @@ To update the deployment with new configurations or image versions:
 ```bash
 helm upgrade app ./helm -n backend -f ./helm/secret_values.yaml
 ```
+
+If you use `ingress.tls.create`, include the same `--set` and `--set-file` flags on `helm upgrade`.
 
 ### Uninstall
 

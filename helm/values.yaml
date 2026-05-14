@@ -3,8 +3,13 @@ namespace: backend
 ingress:
   tls:
     # Set one of secretName or certResolver to enable TLS for websecure.
+    # For local certs, set create=true and provide crt/key via --set-file.
+    create: false
+    createInFrontend: true
     secretName: "focusboard-local-tls"
     certResolver: ""
+    crt: ""
+    key: ""
 
 # -------------------------
 # Auth service configuration
