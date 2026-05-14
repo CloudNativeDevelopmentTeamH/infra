@@ -51,6 +51,17 @@ docker compose up
 
 The project includes a unified Helm chart for deploying the backend services (auth and email) to Kubernetes clusters with production-ready configurations.
 
+### k3d Cluster Creation
+
+```sh
+k3d cluster create infra \
+  -p "80:80@loadbalancer" \
+  -p "443:443@loadbalancer" \
+  -p "9092:9092@loadbalancer" \
+  -p "9644:9644@loadbalancer" \
+  --agents 2
+```
+
 ### Helm Chart Structure
 
 The Helm chart provides a complete Kubernetes deployment including:

@@ -118,18 +118,18 @@ focus:
     enabled: true
     minReplicas: 2
     maxReplicas: 10
-    targetCPUUtilizationPercentage: 70
-    targetMemoryUtilizationPercentage: 75
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 90
     behavior:
       scaleUp:
-        stabilizationWindowSeconds: 0
-        selectPolicy: Max
+        stabilizationWindowSeconds: 60
+        selectPolicy: Min
         policies:
           percent:
-            value: 100
+            value: 25
             periodSeconds: 60
           pods:
-            value: 4
+            value: 1
             periodSeconds: 60
       scaleDown:
         stabilizationWindowSeconds: 300
@@ -233,7 +233,7 @@ frontend:
 
   # Environment configuration
   env:
-    apiBaseUrl: ""
+    apiBaseUrl: "https://focus.localhost"
     authApiBaseUrl: "https://auth.localhost"
     appVersion: "1.0.0"
 
