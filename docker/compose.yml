@@ -199,27 +199,6 @@ services:
       retries: 5
       start_period: 10s
 
-  analytics-db-init:
-    image: postgres:16-alpine
-    environment:
-      PGPASSWORD: analytics
-    volumes:
-      - ../../analytics/backend/platform/migrations:/migrations:ro
-    entrypoint:
-      - /bin/sh
-      - -ec
-      - |
-          until pg_isready -h analytics-postgres -U analytics -d analytics >/dev/null 2>&1; do
-            sleep 2
-          done
-          psql -h analytics-postgres -U analytics -d analytics -v ON_ERROR_STOP=1 -f /migrations/000001_create_init_tables.up.sql
-    depends_on:
-      analytics-postgres:
-        condition: service_healthy
-    restart: "no"
-    networks:
-      - default_network
-
   redpanda:
     image: docker.redpanda.com/redpandadata/redpanda:v25.1.2
     entrypoint:
