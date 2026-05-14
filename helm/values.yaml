@@ -259,7 +259,7 @@ analytics:
     tag: latest
   replicas: 1
   env:
-    KAFKA_BROKERS: "kafka:9092"
+    KAFKA_BROKERS: "redpanda.backend.svc.cluster.local:9092"
     KAFKA_TOPIC: "focus.events"
     KAFKA_GROUP_ID: "analytics-service"
     STORE_BACKEND: "postgres"
