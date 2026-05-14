@@ -228,7 +228,7 @@ frontend:
 
   # Environment configuration
   env:
-    apiBaseUrl: ""
+    apiBaseUrl: "https://focus.localhost"
     authApiBaseUrl: "https://auth.localhost"
     appVersion: "1.0.0"
 
