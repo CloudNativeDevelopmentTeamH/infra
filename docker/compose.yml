@@ -38,9 +38,8 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER?missing rabbitmq user}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD?missing rabbitmq password}
     ports:
+      - "5672:5672"
       - "15672:15672"
-    volumes:
-      - auth_queue_data:/var/lib/rabbitmq
     networks:
       - default_network
     healthcheck:
@@ -293,7 +292,6 @@ services:
 
 volumes:
   auth_db_data:
-  auth_queue_data:
   postgres_data:
   analytics_db_data:
   redpanda_data:
