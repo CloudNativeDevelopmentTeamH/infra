@@ -67,7 +67,6 @@ services:
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER?missing rabbitmq user}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD?missing rabbitmq password}
-      DOCKER_ENV: "true"
     ports:
       - "4000:4000"
       - "50051:50051"
@@ -160,7 +159,7 @@ services:
       FOCUS_EVENTS_KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
 
       # Allow HTTP
-      FOCUS_SECURITY_SECURE_COOKIES: "false"
+      FOCUS_SECURITY_SECURE_COOKIES: "true"
 
     restart: unless-stopped
     networks:
