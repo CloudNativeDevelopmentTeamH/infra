@@ -222,7 +222,7 @@ focusApp:
   defaults:
     categoryColor: "#FFFFFF"
   cookies:
-    rootDomain: "focus.localhost"
+    rootDomain: ""
 
 # -------------------------
 # Frontend
