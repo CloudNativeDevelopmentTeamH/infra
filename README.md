@@ -102,11 +102,6 @@ mkcert -key-file "$CERT_DIR/focusboard-local.key" -cert-file "$CERT_DIR/focusboa
 	"focus.localhost" \
 	"analytics.localhost" \
 	"rabbitmq.localhost"
-
-helm install app ./helm -n backend --create-namespace -f ./helm/secret_values.yaml \
-  --set ingress.tls.create=true \
-  --set-file ingress.tls.crt="$CERT_DIR/focusboard-local.crt" \
-  --set-file ingress.tls.key="$CERT_DIR/focusboard-local.key"
 ```
 
 Helm will create the TLS secret in both the backend and frontend namespaces using the name from `ingress.tls.secretName`.
@@ -136,7 +131,10 @@ sops -d ./helm/secret_values.enc.yaml > ./helm/secret_values.yaml
 ### Deploy to Kubernetes
 
 ```bash
-helm install app ./helm -n backend --create-namespace -f ./helm/secret_values.yaml
+helm install app ./helm -n backend --create-namespace -f ./helm/secret_values.yaml \
+  --set ingress.tls.create=true \
+  --set-file ingress.tls.crt="$CERT_DIR/focusboard-local.crt" \
+  --set-file ingress.tls.key="$CERT_DIR/focusboard-local.key"
 ```
 
 ### Update Deployment
