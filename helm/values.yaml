@@ -218,10 +218,11 @@ focusApp:
         maxLength: 50
   security:
     secureCookies: true
+    csrfEnabled: false # browser ignores .localhost root domain cookie
   defaults:
     categoryColor: "#FFFFFF"
   cookies:
-    rootDomain: ".localhost"
+    rootDomain: "focus.localhost"
 
 # -------------------------
 # Frontend
