@@ -1,62 +1,153 @@
-# VM Installation Guide - Focusboard Application Stack
+# VM-Installationsanleitung - Focusboard Application Stack
 
-This guide describes how to install and configure the complete Focusboard application stack (Frontend, Focus Service, Auth Service) on a bare Linux VM without Docker.
+Diese Anleitung beschreibt, wie der komplette Focusboard-Application-Stack (Frontend, Focus Service, Auth Service) auf einer Linux-VM (Bare-Metal ohne Docker) installiert und konfiguriert wird.
 
-## Prerequisites
+## Voraussetzungen
 
-- Debian based Linux distribution (other distros might work but are untested)
-- Root or sudo access
+- Debian-basierte Linux-Distribution (z. B. Ubuntu 22.04 oder 24.04).
+- Root- oder `sudo`-Zugriff.
 
-## System Architecture
+## Systemarchitektur
 
-The application consists of three main services:
-- **Frontend**: Next.js application (port 3000)
-- **Auth Service**: Node.js/Express with gRPC (ports 4000 HTTP, 50051 gRPC)
-- **Focus Service**: Quarkus/Java application (port 8080)
-- **PostgreSQL**: Two separate databases (auth_db, focus_db)
-- **Nginx**: Reverse proxy for HTTPS/routing
-
----
-
-## Step 1: Required Software
-
-1. Node.js
-2. nvm
-3. Java
-4. Maven
-5. PostgresSQL
-6. Nginx
+Die Anwendung besteht aus drei Hauptdiensten:
+- **Frontend**: Next.js-Anwendung (Port 3000)
+- **Auth Service**: Node.js/Express mit gRPC (Ports: 4000 HTTP, 50051 gRPC)
+- **Focus Service**: Quarkus/Java-Anwendung (Port 8080)
+- **PostgreSQL**: Zwei separate Datenbanken (`auth_db`, `focus_db`)
+- **Nginx**: Reverse Proxy für HTTPS & Routing
 
 ---
 
-## Step 2: Setup DB
+## Schritt 1: Erforderliche Software installieren
 
-Authentication for DB
+System aktualisieren und benötigte Pakete (inkl. Java und Postgres) installieren:
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y curl wget git nginx postgresql postgresql-contrib openjdk-21-jdk maven
+```
 
----
-
-## Step 3: Setup Applications
-
-1. clone git repositories
-2. install packages using npm / maven
-3. create env files
-4. compile code / build using existing targets
-
----
-
-# Step 4: DB init
-
-1. Run drizzle script
-2. flyway auto runs
+Node.js (über `nvm`) installieren:
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+source ~/.bashrc
+nvm install 20  # LTS-Version verwenden
+nvm use 20
+npm install -g pm2  # Prozessmanager für Node.js im Hintergrund
+```
 
 ---
 
-## Step 5: Configure Nginx reverse proxy
+## Schritt 2: Datenbank einrichten
 
-Configure ports, routing & headers
+PostgreSQL-Nutzer und die beiden Datenbanken anlegen:
+```bash
+sudo -u postgres psql <<EOF
+CREATE USER focus_user WITH PASSWORD 'sicheres_passwort';
+CREATE DATABASE auth_db OWNER focus_user;
+CREATE DATABASE focus_db OWNER focus_user;
+EOF
+```
 
 ---
 
-## Step 6: TLS (optional)
+## Schritt 3 & 4: Anwendungen einrichten & DB initialisieren
 
-Add certificates for Nginx
+Repository klonen:
+```bash
+# git clone <deine-repository-url> focusboard
+# cd focusboard
+```
+
+### 1. Auth Service
+```bash
+cd auth
+npm install
+cp .env.example .env  # Datenbank-Passwort und Einstellungen anpassen
+
+# Schema in die Datenbank pushen (Drizzle)
+npm run db:push
+
+# Bauen und mit pm2 starten
+npm run build
+pm2 start dist/server.js --name "auth-service"
+cd ..
+```
+
+### 2. Focus Service (Java/Quarkus)
+```bash
+cd focus
+# Anwendung kompilieren (lädt Maven-Abhängigkeiten)
+./mvnw clean package -DskipTests
+
+# Backend starten (Flyway führt die DB-Migrationen automatisch beim Start aus)
+nohup java -jar target/quarkus-app/quarkus-run.jar > focus.log 2>&1 &
+cd ..
+```
+
+### 3. Frontend
+```bash
+cd frontend
+npm install
+# Erstelle die .env-Datei für notwendige Umgebungsvariablen (API-URLs etc.)
+
+# Bauen und starten
+npm run build
+pm2 start npm --name "frontend" -- start
+cd ..
+```
+
+---
+
+## Schritt 5: Nginx Reverse Proxy konfigurieren
+
+Erstellen einer Nginx-Konfiguration, um den Traffic weiterzuleiten:
+```bash
+sudo nano /etc/nginx/sites-available/focusboard
+```
+
+Füge folgende Konfiguration ein:
+```nginx
+server {
+    listen 80;
+    server_name meine-domain.de;
+
+    # Frontend
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Auth API
+    location /api/auth/ {
+        proxy_pass http://localhost:4000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    # Focus API
+    location /api/focus/ {
+        proxy_pass http://localhost:8080/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+Aktivieren und neu starten:
+```bash
+sudo ln -s /etc/nginx/sites-available/focusboard /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+---
+
+## Schritt 6: TLS (optional)
+
+SSL-Zertifikate hinzufügen per Let's Encrypt / Certbot:
+```bash
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d meine-domain.de
+```
