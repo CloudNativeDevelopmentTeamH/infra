@@ -3,6 +3,9 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: redpanda-topic-init
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 spec:
   template:
     spec:
@@ -14,6 +17,9 @@ spec:
             - /bin/sh
             - -c
             - >-
+              until rpk topic list --brokers redpanda:9092 >/dev/null 2>&1; do
+                sleep 2;
+              done;
               rpk topic create {{ .Values.topicInit.name }} --brokers redpanda:9092 --partitions {{ .Values.topicInit.partitions }} --replicas {{ .Values.topicInit.replicas }} || true
   backoffLimit: 4
 {{- end }}
