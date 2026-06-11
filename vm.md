@@ -38,12 +38,12 @@ Der Stack besteht aus fünf Anwendungsdiensten und drei Infrastruktur-Komponente
 
 ## Schritt 1: Erforderliche Software installieren
 
-System aktualisieren und Basis-Pakete (inkl. Java 21, Maven, Go und PostgreSQL) installieren:
+System aktualisieren und Basis-Pakete (inkl. Java 21, Maven und PostgreSQL) installieren:
 ```bash
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y curl wget git gnupg nginx \
   postgresql postgresql-contrib \
-  openjdk-21-jdk maven golang-go
+  openjdk-21-jdk maven
 ```
 
 Node.js (über `nvm`) installieren:
@@ -53,6 +53,23 @@ source ~/.bashrc
 nvm install 20  # LTS-Version verwenden
 nvm use 20
 npm install -g pm2  # Prozessmanager für Node.js im Hintergrund
+```
+
+### Go installieren (für Analytics Service)
+
+Das `golang-go`-Paket aus den Debian-Repos ist oft veraltet. Aktuelle Version vom
+offiziellen Tarball installieren:
+```bash
+GO_VERSION=1.23.4
+wget "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz"
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xzf "go${GO_VERSION}.linux-amd64.tar.gz"
+
+# PATH dauerhaft setzen
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
+source ~/.profile
+
+go version  # Installation prüfen
 ```
 
 ### RabbitMQ installieren
