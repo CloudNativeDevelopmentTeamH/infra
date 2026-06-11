@@ -9,10 +9,11 @@ Diese Anleitung beschreibt, wie der komplette Focusboard-Application-Stack (Fron
 
 ## Systemarchitektur
 
-Die Anwendung besteht aus drei Hauptdiensten:
+Die Anwendung besteht aus vier Hauptdiensten:
 - **Frontend**: Next.js-Anwendung (Port 3000)
 - **Auth Service**: Node.js/Express mit gRPC (Ports: 4000 HTTP, 50051 gRPC)
 - **Focus Service**: Quarkus/Java-Anwendung (Port 8080)
+- **Analytics Service**: Go Fiber Anwendung
 - **PostgreSQL**: Zwei separate Datenbanken (`auth_db`, `focus_db`)
 - **Nginx**: Reverse Proxy für HTTPS & Routing
 
