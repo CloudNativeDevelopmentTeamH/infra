@@ -109,11 +109,12 @@ Arbeitsverzeichnis nebeneinander klonen:
 ```bash
 mkdir focusboard && cd focusboard
 
-git clone <auth-repository-url>      auth
-git clone <focus-repository-url>     focus
-git clone <frontend-repository-url>  frontend
-git clone <email-repository-url>     email
-git clone <analytics-repository-url> analytics
+git clone https://github.com/CloudNativeDevelopmentTeamH/auth               auth
+git clone https://github.com/CloudNativeDevelopmentTeamH/focus              focus
+git clone https://github.com/CloudNativeDevelopmentTeamH/frontend           frontend
+git clone https://github.com/CloudNativeDevelopmentTeamH/email              email
+git clone https://github.com/CloudNativeDevelopmentTeamH/analytics          analytics
+git clone https://github.com/CloudNativeDevelopmentTeamH/platform-kafka     redpanda
 ```
 
 Die folgenden Schritte gehen davon aus, dass die Service-Ordner
