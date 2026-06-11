@@ -92,10 +92,11 @@ sudo rabbitmq-plugins enable rabbitmq_management
 curl -1sLf 'https://dl.redpanda.com/nzc4ZYQK3WRGd9sy/redpanda/cfg/setup/bash.deb.sh' | sudo -E bash
 sudo apt install -y redpanda
 sudo systemctl enable --now redpanda
-
-# Event-Topic anlegen (von Focus produziert, von Analytics konsumiert)
-rpk topic create focus.events -p 3
 ```
+
+> **Topics als IaC:** Das Topic `focus.events` ist bereits im Repository `platform-kafka/topics/topics.yaml`
+> als Infrastructure-as-Code definiert und wird automatisch beim Deployment erstellt (siehe Schritt 3).
+> Eine manuelle Topic-Erstellung ist daher **nicht** nötig.
 
 ---
 
