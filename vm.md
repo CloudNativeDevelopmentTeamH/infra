@@ -7,8 +7,11 @@ Linux-VM **Bare-Metal (ohne Docker / Kubernetes)** installiert und konfiguriert 
 
 - Debian-basierte Linux-Distribution (z. B. Ubuntu 22.04 oder 24.04).
 - Root- oder `sudo`-Zugriff.
-- Folgende Ports frei: `3000` (Frontend), `4000`/`50051` (Auth), `8088`/`50051`/`9090` (Focus/gRPC),
-  `8080`/`9090` (Analytics), `5672`/`15672` (RabbitMQ), `9092` (Redpanda), `5432` (PostgreSQL), `80`/`443` (Nginx).
+- **Nach außen (Firewall) muss nur Nginx erreichbar sein:** Port `80`/`443`.
+  Alle übrigen Dienste binden nur an `localhost` und brauchen nicht freigegeben zu werden —
+  sie müssen lediglich lokal **unbelegt** sein: `3000` (Frontend), `4000`/`50051` (Auth),
+  `8088` (Focus), `8080`/`9090` (Analytics), `5672`/`15672` (RabbitMQ), `9092` (Redpanda),
+  `5432` (PostgreSQL).
 
 ## Systemarchitektur
 
