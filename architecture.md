@@ -65,35 +65,36 @@ graph TB
     end
 
     %% User flows
-    Users -->|HTTPS| Traefik
+    Users <--> |HTTPS| Traefik
     Traefik -->|frontend.localhost| NextJS
-    Traefik -->|auth.localhost| AuthHTTP
-    Traefik -->|focus.localhost| FocusApp
-    Traefik -->|analytics.localhost| AnalyticsHTTP
+    Traefik <--> |auth.localhost| AuthHTTP
+    Traefik <--> |focus.localhost| FocusApp
+    Traefik <--> |analytics.localhost| AnalyticsHTTP
     Traefik -.->|rabbitmq.localhost<br/>Mgmt UI| RabbitMQ
 
     %% Frontend-to-Backend API calls (via Traefik)
-    NextJS -->|HTTP REST<br/>auth.localhost| Traefik
-    NextJS -->|HTTP REST<br/>focus.localhost| Traefik
+    NextJS <--> |HTTP REST<br/>auth.localhost| Traefik
+    NextJS <--> |HTTP REST<br/>focus.localhost| Traefik
 
     %% Service-to-service communication (gRPC)
-    FocusApp -.->|gRPC Authentication| AuthGRPC
-    FocusApp -.->|gRPC Analytics| AnalyticsGRPC
+    FocusApp <--> |gRPC Authentication| AuthGRPC
+    FocusApp <--> |gRPC Analytics| AnalyticsGRPC
 
     %% Async Communication (RabbitMQ)
     AuthHTTP -->|user.registered| RabbitMQ
-    RabbitMQ -->|consume| EmailApp
+    RabbitMQ <--> |consume| EmailApp
     EmailApp -->|SMTP| ExternalSMTP[External SMTP]
 
     %% Async Communication (Kafka / Redpanda)
     FocusApp -->|publish focus.events| Redpanda
-    AnalyticsHTTP -->|consume focus.events| Redpanda
+    AnalyticsHTTP <--> |consume focus.events| Redpanda
 
     %% Data layer
-    AuthHTTP --> AuthDB
-    AuthGRPC --> AuthDB
-    FocusApp --> FocusDB
-    AnalyticsHTTP --> AnalyticsDB
+    AuthHTTP <--> AuthDB
+    AuthGRPC <--> AuthDB
+    FocusApp <--> FocusDB
+    AnalyticsHTTP <--> AnalyticsDB
+    AnalyticsGRPC <--> AnalyticsDB
 
     AuthDB --> LocalPath
     FocusDB --> LocalPath
@@ -166,32 +167,33 @@ graph TB
     ExternalSMTP[External SMTP<br/>Mailtrap Sandbox]
 
     %% Browser as direct entry point to services
-    Browser -->|localhost:3000| LocalFrontend
-    Browser -->|localhost:4000 REST| LocalAuth
-    Browser -->|localhost:8088 REST| LocalFocus
+    Browser <--> |localhost:3000| LocalFrontend
+    Browser <--> |localhost:4000 REST| LocalAuth
+    Browser <--> |localhost:8088 REST| LocalFocus
     Browser -.->|localhost:15672 Mgmt UI| LocalRabbitMQ
 
     %% Frontend-to-Backend API calls (direct localhost)
-    LocalFrontend -->|HTTP REST<br/>localhost:4000| LocalAuth
-    LocalFrontend -->|HTTP REST<br/>localhost:8088| LocalFocus
+    LocalFrontend <--> |HTTP REST<br/>localhost:4000| LocalAuth
+    LocalFrontend <--> |HTTP REST<br/>localhost:8088| LocalFocus
 
     %% Service-to-service communication (gRPC)
-    LocalFocus -.->|gRPC Authentication 50051| LocalAuth
-    LocalFocus -.->|gRPC Analytics 9090| LocalAnalyticsGRPC
+    LocalFocus <--> |gRPC Authentication 50051| LocalAuth
+    LocalFocus <--> |gRPC Analytics 9090| LocalAnalyticsGRPC
 
     %% Async Communication (RabbitMQ)
     LocalAuth -->|user.registered| LocalRabbitMQ
-    LocalRabbitMQ -->|consume| LocalEmail
+    LocalRabbitMQ <--> |consume| LocalEmail
     LocalEmail -->|SMTP| ExternalSMTP
 
     %% Async Communication (Kafka / Redpanda)
     LocalFocus -->|publish focus.events| LocalRedpanda
-    LocalAnalyticsHTTP -->|consume focus.events| LocalRedpanda
+    LocalAnalyticsHTTP <--> |consume focus.events| LocalRedpanda
 
     %% Database connections
-    LocalAuth -->|SQL| LocalAuthDB
-    LocalFocus -->|SQL| LocalFocusDB
-    LocalAnalyticsHTTP -->|SQL| LocalAnalyticsDB
+    LocalAuth <--> |SQL| LocalAuthDB
+    LocalFocus <--> |SQL| LocalFocusDB
+    LocalAnalyticsHTTP <--> |SQL| LocalAnalyticsDB
+    LocalAnalyticsGRPC <--> |SQL| LocalAnalyticsDB
 
     %% Storage (RabbitMQ is ephemeral - no volume)
     LocalAuthDB --> AuthData
