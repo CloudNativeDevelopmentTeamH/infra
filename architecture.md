@@ -50,7 +50,7 @@ graph TB
             subgraph Data["Data Layer"]
                 AuthDB[(Auth Database<br/>PostgreSQL)]
                 FocusDB[(Focus Database<br/>PostgreSQL)]
-                AnalyticsDB[(Analytics Database)]
+                AnalyticsDB[(Analytics Database<br/>PostgreSQL)]
             end
         end
 
@@ -69,7 +69,7 @@ graph TB
     Traefik -->|frontend.localhost| NextJS
     Traefik -->|auth.localhost| AuthHTTP
     Traefik -->|focus.localhost| FocusApp
-    Traefik -->|analytics.localhost| AnalyticsApp
+    Traefik -->|analytics.localhost| AnalyticsHTTP
     Traefik -.->|rabbitmq.localhost<br/>Mgmt UI| RabbitMQ
 
     %% Frontend-to-Backend API calls (via Traefik)
