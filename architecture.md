@@ -101,21 +101,21 @@ graph TB
     K3s -.->|Pulls Images| Registry
     Dev -.->|Deploy locally via Helm| K3s
 
-    style Users fill:#ce93d8,stroke:#6a1b9a,stroke-width:3px
-    style Traefik fill:#ff9800,stroke:#e65100,stroke-width:3px
-    style NextJS fill:#42a5f5,stroke:#0d47a1,stroke-width:3px
-    style AuthHTTP fill:#66bb6a,stroke:#1b5e20,stroke-width:3px
-    style AuthGRPC fill:#66bb6a,stroke:#1b5e20,stroke-width:3px
-    style FocusApp fill:#26a69a,stroke:#00695c,stroke-width:3px
-    style EmailApp fill:#90caf9,stroke:#1565c0,stroke-width:3px
-    style AnalyticsApp fill:#ab47bc,stroke:#6a1b9a,stroke-width:3px
-    style AuthDB fill:#e53935,stroke:#b71c1c,stroke-width:3px
-    style FocusDB fill:#e53935,stroke:#b71c1c,stroke-width:3px
-    style AnalyticsDB fill:#e53935,stroke:#b71c1c,stroke-width:3px
-    style RabbitMQ fill:#ffcc80,stroke:#e65100,stroke-width:3px
-    style Redpanda fill:#ffcc80,stroke:#e65100,stroke-width:3px
-    style ExternalSMTP fill:#cfd8dc,stroke:#607d8b,stroke-width:3px
-    style LocalPath fill:#d84315,stroke:#bf360c,stroke-width:3px
+    style Users fill:#8e24aa,stroke:#ce93d8,stroke-width:2px,color:#fff
+    style Traefik fill:#e65100,stroke:#ffb74d,stroke-width:2px,color:#000
+    style NextJS fill:#1565c0,stroke:#64b5f6,stroke-width:2px,color:#fff
+    style AuthHTTP fill:#2e7d32,stroke:#81c784,stroke-width:2px,color:#fff
+    style AuthGRPC fill:#2e7d32,stroke:#81c784,stroke-width:2px,color:#fff
+    style FocusApp fill:#00695c,stroke:#4db6ac,stroke-width:2px,color:#fff
+    style EmailApp fill:#00838f,stroke:#4dd0e1,stroke-width:2px,color:#fff
+    style AnalyticsApp fill:#6a1b9a,stroke:#ce93d8,stroke-width:2px,color:#fff
+    style AuthDB fill:#c62828,stroke:#ef9a9a,stroke-width:2px,color:#fff
+    style FocusDB fill:#c62828,stroke:#ef9a9a,stroke-width:2px,color:#fff
+    style AnalyticsDB fill:#c62828,stroke:#ef9a9a,stroke-width:2px,color:#fff
+    style RabbitMQ fill:#ffb300,stroke:#ffe082,stroke-width:2px,color:#000
+    style Redpanda fill:#ffb300,stroke:#ffe082,stroke-width:2px,color:#000
+    style ExternalSMTP fill:#455a64,stroke:#90a4ae,stroke-width:2px,color:#fff
+    style LocalPath fill:#bf360c,stroke:#ff8a65,stroke-width:2px,color:#fff
 ```
 
 
@@ -194,21 +194,21 @@ graph TB
     LocalAnalyticsDB --> AnalyticsData
     LocalRedpanda --> RedpandaData
 
-    style Dev fill:#ce93d8,stroke:#6a1b9a,stroke-width:3px
-    style Browser fill:#ab47bc,stroke:#4a148c,stroke-width:3px
-    style LocalFrontend fill:#42a5f5,stroke:#0d47a1,stroke-width:3px
-    style LocalAuth fill:#66bb6a,stroke:#1b5e20,stroke-width:3px
-    style LocalFocus fill:#26a69a,stroke:#00695c,stroke-width:3px
-    style LocalEmail fill:#90caf9,stroke:#1565c0,stroke-width:3px
-    style LocalAnalytics fill:#ab47bc,stroke:#6a1b9a,stroke-width:3px
-    style LocalAuthDB fill:#e53935,stroke:#b71c1c,stroke-width:3px
-    style LocalFocusDB fill:#e53935,stroke:#b71c1c,stroke-width:3px
-    style LocalAnalyticsDB fill:#e53935,stroke:#b71c1c,stroke-width:3px
-    style LocalRabbitMQ fill:#ffcc80,stroke:#e65100,stroke-width:3px
-    style LocalRedpanda fill:#ffcc80,stroke:#e65100,stroke-width:3px
-    style ExternalSMTP fill:#cfd8dc,stroke:#607d8b,stroke-width:3px
-    style AuthData fill:#d84315,stroke:#bf360c,stroke-width:3px
-    style FocusData fill:#d84315,stroke:#bf360c,stroke-width:3px
-    style AnalyticsData fill:#d84315,stroke:#bf360c,stroke-width:3px
-    style RedpandaData fill:#d84315,stroke:#bf360c,stroke-width:3px
+    style Dev fill:#8e24aa,stroke:#ce93d8,stroke-width:2px,color:#fff
+    style Browser fill:#6a1b9a,stroke:#ce93d8,stroke-width:2px,color:#fff
+    style LocalFrontend fill:#1565c0,stroke:#64b5f6,stroke-width:2px,color:#fff
+    style LocalAuth fill:#2e7d32,stroke:#81c784,stroke-width:2px,color:#fff
+    style LocalFocus fill:#00695c,stroke:#4db6ac,stroke-width:2px,color:#fff
+    style LocalEmail fill:#00838f,stroke:#4dd0e1,stroke-width:2px,color:#fff
+    style LocalAnalytics fill:#6a1b9a,stroke:#ce93d8,stroke-width:2px,color:#fff
+    style LocalAuthDB fill:#c62828,stroke:#ef9a9a,stroke-width:2px,color:#fff
+    style LocalFocusDB fill:#c62828,stroke:#ef9a9a,stroke-width:2px,color:#fff
+    style LocalAnalyticsDB fill:#c62828,stroke:#ef9a9a,stroke-width:2px,color:#fff
+    style LocalRabbitMQ fill:#ffb300,stroke:#ffe082,stroke-width:2px,color:#000
+    style LocalRedpanda fill:#ffb300,stroke:#ffe082,stroke-width:2px,color:#000
+    style ExternalSMTP fill:#455a64,stroke:#90a4ae,stroke-width:2px,color:#fff
+    style AuthData fill:#bf360c,stroke:#ff8a65,stroke-width:2px,color:#fff
+    style FocusData fill:#bf360c,stroke:#ff8a65,stroke-width:2px,color:#fff
+    style AnalyticsData fill:#bf360c,stroke:#ff8a65,stroke-width:2px,color:#fff
+    style RedpandaData fill:#bf360c,stroke:#ff8a65,stroke-width:2px,color:#fff
 ```
