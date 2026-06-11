@@ -30,7 +30,8 @@ graph TB
             end
 
             subgraph AnalyticsService["Analytics Microservice"]
-                AnalyticsApp[Analytics Service<br/>HTTP 8080 / gRPC 9090]
+                AnalyticsHTTP[Analytics Service<br/>HTTP API<br/>Port 8080]
+                AnalyticsGRPC[Analytics Service<br/>gRPC API<br/>Port 9090]
             end
 
             subgraph EmailService["Email Microservice"]
@@ -71,9 +72,13 @@ graph TB
     Traefik -->|analytics.localhost| AnalyticsApp
     Traefik -.->|rabbitmq.localhost<br/>Mgmt UI| RabbitMQ
 
+    %% Frontend-to-Backend API calls (via Traefik)
+    NextJS -->|HTTP REST<br/>auth.localhost| Traefik
+    NextJS -->|HTTP REST<br/>focus.localhost| Traefik
+
     %% Service-to-service communication (gRPC)
     FocusApp -.->|gRPC Authentication| AuthGRPC
-    FocusApp -.->|gRPC Analytics| AnalyticsApp
+    FocusApp -.->|gRPC Analytics| AnalyticsGRPC
 
     %% Async Communication (RabbitMQ)
     AuthHTTP -->|user.registered| RabbitMQ
@@ -82,13 +87,13 @@ graph TB
 
     %% Async Communication (Kafka / Redpanda)
     FocusApp -->|publish focus.events| Redpanda
-    AnalyticsApp -->|consume focus.events| Redpanda
+    AnalyticsHTTP -->|consume focus.events| Redpanda
 
     %% Data layer
     AuthHTTP --> AuthDB
     AuthGRPC --> AuthDB
     FocusApp --> FocusDB
-    AnalyticsApp --> AnalyticsDB
+    AnalyticsHTTP --> AnalyticsDB
 
     AuthDB --> LocalPath
     FocusDB --> LocalPath
@@ -108,7 +113,8 @@ graph TB
     style AuthGRPC fill:#2e7d32,stroke:#81c784,stroke-width:2px,color:#fff
     style FocusApp fill:#00695c,stroke:#4db6ac,stroke-width:2px,color:#fff
     style EmailApp fill:#00838f,stroke:#4dd0e1,stroke-width:2px,color:#fff
-    style AnalyticsApp fill:#6a1b9a,stroke:#ce93d8,stroke-width:2px,color:#fff
+    style AnalyticsHTTP fill:#6a1b9a,stroke:#ce93d8,stroke-width:2px,color:#fff
+    style AnalyticsGRPC fill:#6a1b9a,stroke:#ce93d8,stroke-width:2px,color:#fff
     style AuthDB fill:#c62828,stroke:#ef9a9a,stroke-width:2px,color:#fff
     style FocusDB fill:#c62828,stroke:#ef9a9a,stroke-width:2px,color:#fff
     style AnalyticsDB fill:#c62828,stroke:#ef9a9a,stroke-width:2px,color:#fff
@@ -126,17 +132,15 @@ single `default_network` (bridge).
 
 ```mermaid
 graph TB
-    subgraph Developer["Local Development Environment"]
-        Dev[Developer<br/>Laptop/Workstation]
-        Browser[Web Browser]
-    end
+    Browser[Web Browser<br/>localhost]
 
     subgraph Compose["🐳 Docker Compose — default_network (bridge)"]
         subgraph Services["Application Services"]
             LocalFrontend[frontend<br/>Next.js<br/>Port 3000]
             LocalAuth[auth_app<br/>Node.js/TypeScript<br/>HTTP 4000 / gRPC 50051]
             LocalFocus[focus<br/>Quarkus/Java<br/>Port 8088]
-            LocalAnalytics[analytics<br/>Go<br/>gRPC 9090]
+            LocalAnalyticsHTTP[analytics<br/>Go<br/>HTTP 8080]
+            LocalAnalyticsGRPC[analytics<br/>Go<br/>gRPC 9090]
             LocalEmail[auth_email<br/>Node.js/TypeScript<br/>Worker - no port]
         end
 
@@ -161,18 +165,19 @@ graph TB
 
     ExternalSMTP[External SMTP<br/>Mailtrap Sandbox]
 
-    %% Developer workflow
-    Dev -->|opens| Browser
-
-    %% Published host ports — browser connects directly (no proxy)
+    %% Browser as direct entry point to services
     Browser -->|localhost:3000| LocalFrontend
     Browser -->|localhost:4000 REST| LocalAuth
     Browser -->|localhost:8088 REST| LocalFocus
     Browser -.->|localhost:15672 Mgmt UI| LocalRabbitMQ
 
+    %% Frontend-to-Backend API calls (direct localhost)
+    LocalFrontend -->|HTTP REST<br/>localhost:4000| LocalAuth
+    LocalFrontend -->|HTTP REST<br/>localhost:8088| LocalFocus
+
     %% Service-to-service communication (gRPC)
     LocalFocus -.->|gRPC Authentication 50051| LocalAuth
-    LocalFocus -.->|gRPC Analytics 9090| LocalAnalytics
+    LocalFocus -.->|gRPC Analytics 9090| LocalAnalyticsGRPC
 
     %% Async Communication (RabbitMQ)
     LocalAuth -->|user.registered| LocalRabbitMQ
@@ -181,12 +186,12 @@ graph TB
 
     %% Async Communication (Kafka / Redpanda)
     LocalFocus -->|publish focus.events| LocalRedpanda
-    LocalAnalytics -->|consume focus.events| LocalRedpanda
+    LocalAnalyticsHTTP -->|consume focus.events| LocalRedpanda
 
     %% Database connections
     LocalAuth -->|SQL| LocalAuthDB
     LocalFocus -->|SQL| LocalFocusDB
-    LocalAnalytics -->|SQL| LocalAnalyticsDB
+    LocalAnalyticsHTTP -->|SQL| LocalAnalyticsDB
 
     %% Storage (RabbitMQ is ephemeral - no volume)
     LocalAuthDB --> AuthData
@@ -194,13 +199,13 @@ graph TB
     LocalAnalyticsDB --> AnalyticsData
     LocalRedpanda --> RedpandaData
 
-    style Dev fill:#8e24aa,stroke:#ce93d8,stroke-width:2px,color:#fff
     style Browser fill:#6a1b9a,stroke:#ce93d8,stroke-width:2px,color:#fff
     style LocalFrontend fill:#1565c0,stroke:#64b5f6,stroke-width:2px,color:#fff
     style LocalAuth fill:#2e7d32,stroke:#81c784,stroke-width:2px,color:#fff
     style LocalFocus fill:#00695c,stroke:#4db6ac,stroke-width:2px,color:#fff
     style LocalEmail fill:#00838f,stroke:#4dd0e1,stroke-width:2px,color:#fff
-    style LocalAnalytics fill:#6a1b9a,stroke:#ce93d8,stroke-width:2px,color:#fff
+    style LocalAnalyticsHTTP fill:#6a1b9a,stroke:#ce93d8,stroke-width:2px,color:#fff
+    style LocalAnalyticsGRPC fill:#6a1b9a,stroke:#ce93d8,stroke-width:2px,color:#fff
     style LocalAuthDB fill:#c62828,stroke:#ef9a9a,stroke-width:2px,color:#fff
     style LocalFocusDB fill:#c62828,stroke:#ef9a9a,stroke-width:2px,color:#fff
     style LocalAnalyticsDB fill:#c62828,stroke:#ef9a9a,stroke-width:2px,color:#fff
